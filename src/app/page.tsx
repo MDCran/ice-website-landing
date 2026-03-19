@@ -437,7 +437,7 @@ export default function MaintenancePage() {
               <span className="shimmer-text">Maintenance</span>
             </h1>
             <p className="mx-auto mt-6 max-w-xl text-base sm:text-lg text-[var(--text-secondary)] leading-relaxed">
-              We&apos;re updating our systems to serve you better. Our team is actively deploying improvements to deliver a more robust, secure, and high-performance experience.
+              We&apos;re updating our systems to serve you better.
             </p>
           </motion.div>
 
