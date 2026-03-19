@@ -437,8 +437,7 @@ export default function MaintenancePage() {
               <span className="shimmer-text">Maintenance</span>
             </h1>
             <p className="mx-auto mt-6 max-w-xl text-base sm:text-lg text-[var(--text-secondary)] leading-relaxed">
-              We&apos;re updating our systems to serve you better. Our team is
-              working hard to bring you an improved experience.
+              We&apos;re updating our systems to serve you better. Our team is actively deploying improvements to deliver a more robust, secure, and high-performance experience.
             </p>
           </motion.div>
 
@@ -560,8 +559,7 @@ export default function MaintenancePage() {
                 We&apos;re Still <span className="gradient-text">Here For You</span>
               </h2>
               <p className="mx-auto mt-5 max-w-xl text-[var(--text-secondary)] leading-relaxed">
-                While our website is being updated, our team is still available
-                to help with all your enterprise technology needs.
+                While our platform is being updated, our team remains fully operational and available to support your infrastructure and technology needs.
               </p>
             </motion.div>
 
@@ -646,7 +644,7 @@ export default function MaintenancePage() {
                 />
                 <div className="text-center sm:text-left">
                   <p className="text-base font-semibold text-[var(--text-primary)]">
-                    Proud IBM Business Partner
+                    Trusted IBM Business Partner Since 1990
                   </p>
                   <p className="mt-1 text-sm text-[var(--text-secondary)]">
                     Delivering enterprise technology solutions since 1990 —
