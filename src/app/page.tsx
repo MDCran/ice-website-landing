@@ -644,7 +644,7 @@ export default function MaintenancePage() {
                 />
                 <div className="text-center sm:text-left">
                   <p className="text-base font-semibold text-[var(--text-primary)]">
-                    Trusted IBM Business Partner Since 1990
+                    Trusted IBM Business Partner
                   </p>
                   <p className="mt-1 text-sm text-[var(--text-secondary)]">
                     Delivering enterprise technology solutions since 1990 —
