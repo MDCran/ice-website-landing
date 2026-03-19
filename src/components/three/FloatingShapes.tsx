@@ -66,10 +66,12 @@ const FloatingShape = React.memo(function FloatingShape({
 }: FloatingShapeProps) {
   const meshRef = useRef<THREE.Mesh>(null);
   const phaseOffset = index * 1.7;
+  const timeRef = useRef(0);
 
-  useFrame(({ clock }) => {
+  useFrame((_, delta) => {
     if (!meshRef.current) return;
-    const t = clock.getElapsedTime();
+    timeRef.current += delta;
+    const t = timeRef.current;
 
     meshRef.current.rotation.x = t * config.rotationSpeeds[0];
     meshRef.current.rotation.y = t * config.rotationSpeeds[1];

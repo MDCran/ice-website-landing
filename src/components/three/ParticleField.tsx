@@ -25,6 +25,7 @@ const BLUE = new THREE.Color("#0474bc");
 function Particles() {
   const pointsRef = useRef<THREE.Points>(null);
   const linesRef = useRef<THREE.LineSegments>(null);
+  const timeRef = useRef(0);
 
   /* ---- Generate initial random positions & per-particle data ------------- */
   const { positions, colors, basePositions, speeds, phases, particleColors } =
@@ -73,8 +74,9 @@ function Particles() {
   }, [maxLines]);
 
   /* ---- Animation loop ---------------------------------------------------- */
-  useFrame(({ clock, pointer }) => {
-    const time = clock.getElapsedTime();
+  useFrame(({ pointer }, delta) => {
+    timeRef.current += delta;
+    const time = timeRef.current;
 
     const pts = pointsRef.current;
     const lines = linesRef.current;

@@ -27,6 +27,7 @@ const NetworkScene = React.memo(function NetworkScene({
 }: NetworkSceneProps) {
   const pointsRef = useRef<THREE.Points>(null);
   const linesRef = useRef<THREE.LineSegments>(null);
+  const timeRef = useRef(0);
 
   const themeColor = useMemo(() => new THREE.Color(color), [color]);
 
@@ -72,8 +73,9 @@ const NetworkScene = React.memo(function NetworkScene({
     return { linePositions, lineColors };
   }, [maxLines]);
 
-  useFrame(({ clock }) => {
-    const time = clock.getElapsedTime();
+  useFrame((_, delta) => {
+    timeRef.current += delta;
+    const time = timeRef.current;
     const pts = pointsRef.current;
     const lines = linesRef.current;
     if (!pts || !lines) return;

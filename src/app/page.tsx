@@ -34,6 +34,7 @@ const BLUE = new THREE.Color("#0474bc");
 function Particles({ darkMode }: { darkMode: boolean }) {
   const pointsRef = useRef<THREE.Points>(null);
   const linesRef = useRef<THREE.LineSegments>(null);
+  const timeRef = useRef(0);
 
   const { positions, colors, basePositions, speeds, phases, particleColors } =
     useMemo(() => {
@@ -76,8 +77,9 @@ function Particles({ darkMode }: { darkMode: boolean }) {
     return { linePositions, lineColors };
   }, [maxLines]);
 
-  useFrame(({ clock, pointer }) => {
-    const time = clock.getElapsedTime();
+  useFrame(({ pointer }, delta) => {
+    timeRef.current += delta;
+    const time = timeRef.current;
     const pts = pointsRef.current;
     const lines = linesRef.current;
     if (!pts || !lines) return;

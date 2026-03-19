@@ -46,9 +46,11 @@ const DataCenterPoint = React.memo(function DataCenterPoint({
 }: DataCenterPointProps) {
   const meshRef = useRef<THREE.Mesh>(null);
   const glowRef = useRef<THREE.Mesh>(null);
+  const timeRef = useRef(0);
 
-  useFrame(({ clock }) => {
-    const t = clock.getElapsedTime();
+  useFrame((_, delta) => {
+    timeRef.current += delta;
+    const t = timeRef.current;
     const pulse = 0.6 + Math.sin(t * PULSE_SPEED + phaseOffset) * 0.4;
 
     if (meshRef.current) {
@@ -98,6 +100,7 @@ interface GlobeSceneProps {
 
 const GlobeScene = React.memo(function GlobeScene({ isVisible }: GlobeSceneProps) {
   const groupRef = useRef<THREE.Group>(null);
+  const timeRef = useRef(0);
 
   const dataCenters = useMemo(() => {
     return DATA_CENTER_COORDS.map(([theta, phi], i) => {
@@ -116,9 +119,10 @@ const GlobeScene = React.memo(function GlobeScene({ isVisible }: GlobeSceneProps
     });
   }, []);
 
-  useFrame(({ clock }) => {
+  useFrame((_, delta) => {
     if (!groupRef.current || !isVisible) return;
-    const t = clock.getElapsedTime();
+    timeRef.current += delta;
+    const t = timeRef.current;
     groupRef.current.rotation.y = t * ROTATION_SPEED;
     groupRef.current.rotation.x = Math.sin(t * 0.05) * 0.1;
   });

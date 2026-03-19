@@ -1,15 +1,8 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import { Geist } from "next/font/google";
 import "./globals.css";
 import CursorGlow from "@/components/effects/CursorGlow";
 import NoiseOverlay from "@/components/effects/NoiseOverlay";
-
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
-  variable: "--font-inter",
-});
 
 const geist = Geist({
   subsets: ["latin"],
@@ -39,7 +32,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geist.variable} ${inter.variable} font-sans antialiased scan-line overflow-x-hidden`}
+        className={`${geist.variable} font-sans antialiased scan-line overflow-x-hidden`}
       >
         <CursorGlow />
         <NoiseOverlay />
