@@ -1510,7 +1510,6 @@ select:focus {
     scroll-behavior: auto !important;
   }
   .scan-line::after,
-  .animate-marquee,
   .animate-float,
   .pulse-glow,
   .shimmer-text {

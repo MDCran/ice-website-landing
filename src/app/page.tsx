@@ -437,7 +437,7 @@ export default function MaintenancePage() {
               <span className="shimmer-text">Maintenance</span>
             </h1>
             <p className="mx-auto mt-6 max-w-xl text-base sm:text-lg text-[var(--text-secondary)] leading-relaxed">
-              We&apos;re updating our systems to serve you better.
+              We&apos;re updating our systems to serve you better, with enhanced performance, security, and reliability.
             </p>
           </motion.div>
 
@@ -480,6 +480,59 @@ export default function MaintenancePage() {
               <div className="w-1 h-1.5 rounded-full bg-sky-400/60" />
             </motion.div>
           </motion.div>
+        </section>
+
+        {/* ═══════════════════════════════════════════════════════════════════
+            TRUSTED BY — PARTNER LOGO MARQUEE
+            ═══════════════════════════════════════════════════════════════════ */}
+        <section className="relative py-12 sm:py-16 overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-sky-400/20 to-transparent" />
+
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center text-xs font-semibold uppercase tracking-[0.25em] text-sky-400 mb-8"
+          >
+            Trusted By Industry Leaders
+          </motion.p>
+
+          <div className="relative">
+            <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[var(--bg-primary)] to-transparent z-10 pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[var(--bg-primary)] to-transparent z-10 pointer-events-none" />
+            <div className="overflow-hidden">
+              <div className="flex w-fit animate-marquee">
+                {[0, 1].map((setIdx) =>
+                  [
+                    { src: "/images/v3/b_1.png", alt: "IBM" },
+                    { src: "/images/v3/b_2.png", alt: "Lenovo" },
+                    { src: "/images/v3/b_3.png", alt: "Cisco" },
+                    { src: "/images/v3/b_4.png", alt: "Dell" },
+                    { src: "/images/v3/b_5.png", alt: "Printronix" },
+                    { src: "/images/v3/b_6.png", alt: "CloudSafe" },
+                    { src: "/images/v3/b_7.png", alt: "Acronix" },
+                    { src: "/images/v3/b_8.png", alt: "DASCOM" },
+                  ].map((logo, idx) => (
+                    <div
+                      key={`${setIdx}-${idx}`}
+                      className="flex-shrink-0 mx-8 sm:mx-12 flex items-center justify-center"
+                    >
+                      <Image
+                        src={logo.src}
+                        alt={logo.alt}
+                        width={140}
+                        height={50}
+                        className="h-10 sm:h-12 w-auto object-contain opacity-40 hover:opacity-90 transition-all duration-300 grayscale hover:grayscale-0"
+                      />
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-sky-400/20 to-transparent" />
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════════
