@@ -264,7 +264,7 @@ export default function Footer() {
             {/* Company Info */}
             <motion.div custom={0} variants={fadeUp} className="lg:col-span-1">
               <Link href="/" className="inline-block mb-5">
-                <div className="logo-container rounded-lg bg-[#f8fafc] px-3 py-2 flex flex-col items-center">
+                <div className="logo-container rounded-lg bg-[#FFFFFF] px-3 py-2 flex flex-col items-center">
                   <Image
                     src={logoSrc}
                     alt="ICE"

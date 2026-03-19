@@ -409,7 +409,7 @@ export default function MaintenancePage() {
           >
             <div className="relative">
               <div className="absolute -inset-4 rounded-2xl bg-sky-500/10 blur-2xl" />
-              <div className="relative rounded-xl bg-[#f8fafc] p-4 shadow-lg shadow-sky-500/10">
+              <div className="relative rounded-xl bg-[#ffffff] p-4 shadow-lg shadow-sky-500/10">
                 <Image
                   src="/images/logo/ice-full.jpg"
                   alt="International Computer Exchange"

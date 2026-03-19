@@ -1387,9 +1387,11 @@ select:focus {
 
 /* ── Logo container soft-edge blend ──────────────────────────────────── */
 .logo-container {
+  background-color: #FFFFFF !important;
   box-shadow: 0 0 12px 8px rgba(2, 6, 23, 0.88);
 }
 [data-theme="light"] .logo-container {
+  background-color: #FFFFFF !important;
   box-shadow: none;
 }
 

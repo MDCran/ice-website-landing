@@ -153,7 +153,7 @@ export default function Navbar() {
         <div className="mx-auto max-w-7xl px-6 flex items-center justify-between h-16 lg:h-[72px]">
           {/* Logo */}
           <Link href="/" className="relative shrink-0 group" aria-label="ICE Home">
-            <div className="logo-container rounded-lg bg-[#f8fafc] px-3 py-2 flex flex-col items-center transition-all duration-300 group-hover:shadow-[0_0_16px_rgba(4,155,251,0.3)]">
+            <div className="logo-container rounded-lg bg-[#FFFFFF] px-3 py-2 flex flex-col items-center transition-all duration-300 group-hover:shadow-[0_0_16px_rgba(4,155,251,0.3)]">
               <Image
                 src="/images/logo/logo-dark.svg"
                 alt="International Computer Exchange"
@@ -350,7 +350,7 @@ export default function Navbar() {
             >
               <div className="flex items-center justify-between px-6 h-16 border-b border-white/5 mobile-menu-header">
                 <Link href="/" onClick={() => setMobileOpen(false)} aria-label="ICE Home">
-                  <div className="logo-container rounded-lg bg-[#f8fafc] px-2.5 py-1.5 flex flex-col items-center">
+                  <div className="logo-container rounded-lg bg-[#FFFFFF] px-2.5 py-1.5 flex flex-col items-center">
                     <Image
                       src="/images/logo/logo-dark.svg"
                       alt="International Computer Exchange"
