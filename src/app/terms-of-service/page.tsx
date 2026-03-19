@@ -69,8 +69,8 @@ Your continued use of the Site following the posting of revised Terms means that
 
 International Computer Exchange, Inc.
 
-Email: sales@icesales.com
-Phone: 561-394-9188`,
+Email: info@icesales.com
+Phone: 1-800-786-9188`,
   },
 ];
 

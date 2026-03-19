@@ -104,7 +104,7 @@ const FAQS: FAQ[] = [
     id: "faq-5",
     question: "How do I get started?",
     answer:
-      "Getting started with ICE is simple. Contact us at 561-394-9188 or email sales@icesales.com to schedule a consultation. Our team will assess your current infrastructure, understand your business requirements, and recommend tailored solutions that fit your needs and budget. We also offer free initial assessments for qualified businesses.",
+      "Getting started with ICE is simple. Contact us at 1-800-786-9188 or email info@icesales.com to schedule a consultation. Our team will assess your current infrastructure, understand your business requirements, and recommend tailored solutions that fit your needs and budget. We also offer free initial assessments for qualified businesses.",
   },
 ];
 

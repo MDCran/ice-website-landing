@@ -166,8 +166,8 @@ export default function SmsConsentPage() {
                       <p className="text-sm font-semibold text-white">Email Us</p>
                       <p className="text-sm text-slate-400 leading-[1.8]">
                         Send an email to{" "}
-                        <a href="mailto:sales@icesales.com" className="text-sky-400 hover:text-sky-300 underline underline-offset-2">
-                          sales@icesales.com
+                        <a href="mailto:info@icesales.com" className="text-sky-400 hover:text-sky-300 underline underline-offset-2">
+                          info@icesales.com
                         </a>{" "}
                         with the subject &ldquo;SMS Opt-Out&rdquo;.
                       </p>
@@ -181,8 +181,8 @@ export default function SmsConsentPage() {
                       <p className="text-sm font-semibold text-white">Call Us</p>
                       <p className="text-sm text-slate-400 leading-[1.8]">
                         Call{" "}
-                        <a href="tel:5613949188" className="text-sky-400 hover:text-sky-300 underline underline-offset-2">
-                          561-394-9188
+                        <a href="tel:18007869188" className="text-sky-400 hover:text-sky-300 underline underline-offset-2">
+                          1-800-786-9188
                         </a>{" "}
                         during business hours (9:00 AM &ndash; 5:00 PM ET).
                       </p>
@@ -257,14 +257,14 @@ export default function SmsConsentPage() {
                   <p>International Computer Exchange, Inc.</p>
                   <p>
                     Email:{" "}
-                    <a href="mailto:sales@icesales.com" className="text-sky-400 hover:text-sky-300 underline underline-offset-2">
-                      sales@icesales.com
+                    <a href="mailto:info@icesales.com" className="text-sky-400 hover:text-sky-300 underline underline-offset-2">
+                      info@icesales.com
                     </a>
                   </p>
                   <p>
                     Phone:{" "}
-                    <a href="tel:5613949188" className="text-sky-400 hover:text-sky-300 underline underline-offset-2">
-                      561-394-9188
+                    <a href="tel:18007869188" className="text-sky-400 hover:text-sky-300 underline underline-offset-2">
+                      1-800-786-9188
                     </a>
                   </p>
                 </div>

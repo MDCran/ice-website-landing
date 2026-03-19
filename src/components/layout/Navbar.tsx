@@ -128,13 +128,13 @@ export default function Navbar() {
               </span>
             </div>
             <div className="flex items-center gap-6">
-              <a href="tel:5613949188" className="inline-flex items-center gap-1.5 transition-colors hover:text-sky-400">
+              <a href="tel:18007869188" className="inline-flex items-center gap-1.5 transition-colors hover:text-sky-400">
                 <Phone className="h-3 w-3 text-sky-400" />
-                561-394-9188
+                1-800-786-9188
               </a>
-              <a href="mailto:sales@icesales.com" className="inline-flex items-center gap-1.5 transition-colors hover:text-sky-400">
+              <a href="mailto:info@icesales.com" className="inline-flex items-center gap-1.5 transition-colors hover:text-sky-400">
                 <Mail className="h-3 w-3 text-sky-400" />
-                sales@icesales.com
+                info@icesales.com
               </a>
             </div>
           </div>
@@ -449,11 +449,11 @@ export default function Navbar() {
               </div>
 
               <div className="px-6 py-6 border-t border-white/5 space-y-3 mobile-menu-footer">
-                <a href="tel:5613949188" className="flex items-center gap-3 text-sm text-slate-400 hover:text-sky-400 transition-colors">
-                  <Phone className="h-4 w-4 text-sky-400" />561-394-9188
+                <a href="tel:18007869188" className="flex items-center gap-3 text-sm text-slate-400 hover:text-sky-400 transition-colors">
+                  <Phone className="h-4 w-4 text-sky-400" />1-800-786-9188
                 </a>
-                <a href="mailto:sales@icesales.com" className="flex items-center gap-3 text-sm text-slate-400 hover:text-sky-400 transition-colors">
-                  <Mail className="h-4 w-4 text-sky-400" />sales@icesales.com
+                <a href="mailto:info@icesales.com" className="flex items-center gap-3 text-sm text-slate-400 hover:text-sky-400 transition-colors">
+                  <Mail className="h-4 w-4 text-sky-400" />info@icesales.com
                 </a>
               </div>
             </motion.nav>

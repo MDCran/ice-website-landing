@@ -386,13 +386,13 @@ export default function MaintenancePage() {
               <span>1279 W Palmetto Park Rd #272415, Boca Raton, FL 33427</span>
             </div>
             <div className="flex items-center gap-4 sm:gap-6 mx-auto sm:mx-0">
-              <a href="tel:5613949188" className="inline-flex items-center gap-1.5 transition-colors hover:text-sky-400">
+              <a href="tel:18007869188" className="inline-flex items-center gap-1.5 transition-colors hover:text-sky-400">
                 <Phone className="h-3 w-3 text-sky-400 shrink-0" />
-                561-394-9188
+                1-800-786-9188
               </a>
-              <a href="mailto:sales@icesales.com" className="inline-flex items-center gap-1.5 transition-colors hover:text-sky-400">
+              <a href="mailto:info@icesales.com" className="inline-flex items-center gap-1.5 transition-colors hover:text-sky-400">
                 <Mail className="h-3 w-3 text-sky-400 shrink-0" />
-                sales@icesales.com
+                info@icesales.com
               </a>
             </div>
           </div>
@@ -437,7 +437,7 @@ export default function MaintenancePage() {
               <span className="shimmer-text">Maintenance</span>
             </h1>
             <p className="mx-auto mt-6 max-w-xl text-base sm:text-lg text-[var(--text-secondary)] leading-relaxed">
-              We&apos;re upgrading our systems to serve you better. Our team is
+              We&apos;re updating our systems to serve you better. Our team is
               working hard to bring you an improved experience.
             </p>
           </motion.div>
@@ -568,7 +568,7 @@ export default function MaintenancePage() {
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {/* Phone */}
               <motion.a
-                href="tel:5613949188"
+                href="tel:18007869188"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -582,13 +582,13 @@ export default function MaintenancePage() {
                   Phone
                 </h3>
                 <p className="text-base sm:text-lg font-medium text-sky-400 group-hover:text-sky-300 transition-colors">
-                  561-394-9188
+                  1-800-786-9188
                 </p>
               </motion.a>
 
               {/* Email */}
               <motion.a
-                href="mailto:sales@icesales.com"
+                href="mailto:info@icesales.com"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -602,7 +602,7 @@ export default function MaintenancePage() {
                   Email
                 </h3>
                 <p className="text-base sm:text-lg font-medium text-sky-400 group-hover:text-sky-300 transition-colors break-all sm:break-normal">
-                  sales@icesales.com
+                  info@icesales.com
                 </p>
               </motion.a>
 

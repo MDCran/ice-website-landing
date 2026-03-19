@@ -64,14 +64,14 @@ const contactInfo = [
   {
     icon: Mail,
     label: "Email",
-    value: "sales@icesales.com",
-    href: "mailto:sales@icesales.com",
+    value: "info@icesales.com",
+    href: "mailto:info@icesales.com",
   },
   {
     icon: Phone,
     label: "Phone",
-    value: "561-394-9188",
-    href: "tel:5613949188",
+    value: "1-800-786-9188",
+    href: "tel:18007869188",
   },
   {
     icon: Clock,

@@ -220,7 +220,7 @@ export const searchIndex: SearchItem[] = [
   {
     title: "Contact Us",
     description:
-      "Get in touch with ICE for enterprise technology solutions. 561-394-9188 or sales@icesales.com.",
+      "Get in touch with ICE for enterprise technology solutions. 1-800-786-9188 or info@icesales.com.",
     url: "/contact",
     category: "Pages",
     keywords: ["contact", "phone", "email", "consultation", "quote"],

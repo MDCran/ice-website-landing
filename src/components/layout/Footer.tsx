@@ -197,7 +197,7 @@ export default function Footer() {
             </motion.div>
 
             <motion.a
-              href="tel:561-394-9188"
+              href="tel:18007869188"
               custom={1}
               variants={fadeUp}
               className="group flex items-center gap-4 rounded-xl border border-white/[0.06] bg-white/[0.02] px-5 py-4 backdrop-blur-md transition-all duration-300 hover:border-sky-400/20 hover:bg-white/[0.04] hover:shadow-[0_0_20px_rgba(168,85,247,0.06)] glint-card"
@@ -207,12 +207,12 @@ export default function Footer() {
               </div>
               <div>
                 <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">Phone</p>
-                <p className="text-sm font-semibold text-white">561-394-9188</p>
+                <p className="text-sm font-semibold text-white">1-800-786-9188</p>
               </div>
             </motion.a>
 
             <motion.a
-              href="mailto:sales@icesales.com"
+              href="mailto:info@icesales.com"
               custom={2}
               variants={fadeUp}
               className="group flex items-center gap-4 rounded-xl border border-white/[0.06] bg-white/[0.02] px-5 py-4 backdrop-blur-md transition-all duration-300 hover:border-sky-400/20 hover:bg-white/[0.04] hover:shadow-[0_0_20px_rgba(168,85,247,0.06)] glint-card"
@@ -222,7 +222,7 @@ export default function Footer() {
               </div>
               <div>
                 <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">Email</p>
-                <p className="text-sm font-semibold text-white">sales@icesales.com</p>
+                <p className="text-sm font-semibold text-white">info@icesales.com</p>
               </div>
             </motion.a>
 
