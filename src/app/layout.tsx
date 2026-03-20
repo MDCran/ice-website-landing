@@ -11,12 +11,9 @@ const geist = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "International Computer Exchange — Under Maintenance",
+  title: "International Computer Exchange",
   description:
-    "IBM Business Partner since 1990 — our website is currently under maintenance. We'll be back soon with enterprise technology solutions including cloud hosting, data protection, security, and managed services.",
-  icons: {
-    icon: "/images/logo/ice-full.jpg",
-  },
+    "IBM Business Partner since 1990 — International Computer Exchange is currently updating its online presence. We remain fully available to support existing clients and discuss new opportunities for enterprise technology solutions.",
 };
 
 export default function RootLayout({

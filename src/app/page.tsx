@@ -431,34 +431,28 @@ export default function MaintenancePage() {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="text-center mb-12"
           >
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.1] tracking-tight text-[var(--text-primary)]">
-              Website Under{" "}
-              <br className="hidden sm:block" />
-              <span className="shimmer-text">Maintenance</span>
+            <h1 className="text-lg sm:text-xl md:text-2xl font-semibold leading-[1.4] tracking-tight text-[var(--text-primary)]">
+              We&apos;re refreshing our website to better reflect our current{" "}
+              <span className="shimmer-text">technology solutions</span> and services.
             </h1>
-            <p className="mx-auto mt-6 max-w-xl text-base sm:text-lg text-[var(--text-secondary)] leading-relaxed">
-              We&apos;re updating our systems to serve you better, with enhanced performance, security, and reliability.
+            <p className="mx-auto mt-8 max-w-2xl text-base sm:text-lg text-[var(--text-secondary)] leading-relaxed">
+              International Computer Exchange is currently updating its online presence. While our new site is being finalized, we remain fully available to support existing clients, discuss new opportunities, and provide information about our solutions directly.
             </p>
-          </motion.div>
-
-          {/* Countdown Timer */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.7 }}
-            className="mb-8"
-          >
-            <p className="text-center text-xs font-semibold uppercase tracking-[0.25em] text-sky-400 mb-6">
-              Launching June 1, 2026
-            </p>
-            <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
-              <CountdownUnit value={timeLeft.days} label="Days" />
-              <CountdownSeparator />
-              <CountdownUnit value={timeLeft.hours} label="Hours" />
-              <CountdownSeparator />
-              <CountdownUnit value={timeLeft.minutes} label="Minutes" />
-              <CountdownSeparator />
-              <CountdownUnit value={timeLeft.seconds} label="Seconds" />
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-8 w-full">
+              <a
+                href="tel:1-800-786-9188"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-sky-500 text-white font-medium text-sm hover:bg-sky-400 transition-colors"
+              >
+                <Phone className="h-4 w-4" />
+                Call Now
+              </a>
+              <a
+                href="mailto:info@icesales.com"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-[var(--text-muted)]/30 text-[var(--text-primary)] font-medium text-sm hover:border-sky-400 hover:text-sky-400 transition-colors"
+              >
+                <Mail className="h-4 w-4" />
+                Email Us
+              </a>
             </div>
           </motion.div>
 
