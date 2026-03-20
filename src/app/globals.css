@@ -1622,3 +1622,29 @@ select:focus {
     margin: 0.5cm 1cm;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LOGIN INPUT (Access Pages)
+   ═══════════════════════════════════════════════════════════════════════════ */
+:root .login-input,
+[data-theme="dark"] .login-input {
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+[data-theme="dark"] .login-input::placeholder {
+  color: #64748b;
+}
+
+[data-theme="light"] .login-input {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #0f172a;
+}
+[data-theme="light"] .login-input::placeholder {
+  color: #94a3b8;
+}
+[data-theme="light"] .login-input:focus {
+  border-color: rgba(56, 189, 248, 0.6);
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.15);
+}

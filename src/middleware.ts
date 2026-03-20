@@ -7,6 +7,7 @@ export function middleware(request: NextRequest) {
   // Allow the home page, API routes, static assets, and Next.js internals
   if (
     pathname === "/" ||
+    pathname.startsWith("/access/") ||
     pathname.startsWith("/api/") ||
     pathname.startsWith("/_next/") ||
     pathname.startsWith("/images/") ||
