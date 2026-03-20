@@ -341,10 +341,11 @@ export default function Footer() {
 
       {/* Bottom Bar */}
       <div className="border-t border-white/[0.04] bg-[#020617]">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 sm:px-6 lg:px-8">
-          <p className="text-xs text-slate-500">
-            &copy; {new Date().getFullYear()} International Computer Exchange, Inc. All Rights Reserved.
-          </p>
+        <div className="mx-auto flex max-w-7xl flex-col items-center gap-2 px-4 py-5 text-center sm:flex-row sm:justify-between sm:text-left sm:px-6 lg:px-8">
+          <div className="text-xs text-slate-500 text-center sm:text-left">
+            <p>&copy; {new Date().getFullYear()} International Computer Exchange, Inc.</p>
+            <p>All Rights Reserved.</p>
+          </div>
           <a
             href="https://mdcran.com"
             target="_blank"

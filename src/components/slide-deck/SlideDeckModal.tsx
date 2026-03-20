@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback, type ComponentType } from "re
 import * as Dialog from "@radix-ui/react-dialog";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { motion, AnimatePresence } from "motion/react";
-import { ChevronLeft, ChevronRight, X, Download, Loader2, RotateCcw, Maximize, Minimize } from "lucide-react";
+import { ChevronLeft, ChevronRight, X, Download, Loader2, Smartphone, Maximize, Minimize } from "lucide-react";
 import SlideRenderer, { NATIVE_W, NATIVE_H } from "./SlideRenderer";
 import SlideBackground from "./SlideBackground";
 import SlideTitle from "./slides/SlideTitle";
@@ -60,7 +60,6 @@ export default function SlideDeckModal({ open, onOpenChange }: SlideDeckModalPro
   const [showFsTooltip, setShowFsTooltip] = useState(false);
   const offscreenRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef(0);
-  const wasLandscape = useRef(false);
   const prevSlideRef = useRef(0);
 
   const totalSlides = SLIDES.length;
@@ -140,40 +139,22 @@ export default function SlideDeckModal({ open, onOpenChange }: SlideDeckModalPro
     }
   }, [open]);
 
-  /* Mobile orientation — portrait prompt + auto-close on rotate back to portrait */
+  /* Mobile orientation — show rotate prompt in portrait, slides in landscape */
   useEffect(() => {
     if (!open) return;
     if (!isTouchDevice) return;
 
     const mql = window.matchMedia("(orientation: portrait)");
-
-    const check = (e: MediaQueryList | MediaQueryListEvent) => {
-      const portrait = e.matches;
-      setIsPortrait(portrait);
-
-      // If they were in landscape viewing slides and rotated back to portrait → close
-      if (portrait && wasLandscape.current) {
-        onOpenChange(false);
-        wasLandscape.current = false;
-      }
-      if (!portrait) {
-        wasLandscape.current = true;
-      }
-    };
-
+    const check = (e: MediaQueryList | MediaQueryListEvent) => setIsPortrait(e.matches);
     check(mql);
-    // Don't auto-close on first open in portrait — they haven't seen slides yet
-    wasLandscape.current = false;
-
     mql.addEventListener("change", check);
     return () => mql.removeEventListener("change", check);
-  }, [open, isTouchDevice, onOpenChange]);
+  }, [open, isTouchDevice]);
 
   /* Reset on open + show fullscreen tooltip (desktop only) */
   useEffect(() => {
     if (open) {
       setCurrentSlide(0);
-      wasLandscape.current = false;
       if (!isTouchDevice) {
         setShowFsTooltip(true);
         const timer = setTimeout(() => setShowFsTooltip(false), 3500);
@@ -278,7 +259,7 @@ export default function SlideDeckModal({ open, onOpenChange }: SlideDeckModalPro
                   {/* ── Portrait prompt (mobile only) ── */}
                   {isTouchDevice && isPortrait && (
                     <div className="absolute inset-0 z-[110] flex flex-col items-center justify-center bg-[#020617] text-center px-8">
-                      <RotateCcw className="h-14 w-14 text-sky-400 mb-5" style={{ animation: "spin 3s linear infinite" }} />
+                      <Smartphone className="h-14 w-14 text-sky-400 mb-5" style={{ animation: "slide-deck-rotate 2s ease-in-out infinite" }} />
                       <p className="text-white text-xl font-semibold mb-2">Rotate Your Device</p>
                       <p className="text-slate-400 text-sm max-w-xs">Turn your phone to landscape to view the slide deck.</p>
                       <Dialog.Close asChild>

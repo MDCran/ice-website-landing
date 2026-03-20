@@ -111,9 +111,22 @@ function StatCard({ value, suffix, label, icon: Icon, inView }: {
 
 export default function Home() {
   const statsRef = useRef<HTMLDivElement>(null);
+  const bannerRef = useRef<HTMLDivElement>(null);
   const [statsInView, setStatsInView] = useState(false);
+  const [bannerHeight, setBannerHeight] = useState(40);
   const parallaxSlow = useParallax(0.1);
   const parallaxMed = useParallax(0.2);
+
+  // Measure banner height so header sits right below it
+  useEffect(() => {
+    const el = bannerRef.current;
+    if (!el) return;
+    const measure = () => setBannerHeight(el.offsetHeight);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   useEffect(() => {
     const el = statsRef.current;
@@ -135,16 +148,16 @@ export default function Home() {
     <ThemeProvider>
     <main>
       {/* ═══ REFRESH BANNER ═══ */}
-      <div className="fixed top-0 left-0 right-0 z-50 border-b border-sky-500/20" style={{ background: "var(--bg-secondary)" }}>
-        <div className="mx-auto max-w-7xl px-4 py-2.5 text-center">
-          <p className="text-sm font-medium text-sky-400 dark:text-sky-300" style={{ color: "var(--banner-text)" }}>
-            We&apos;re updating our website and continuing to expand content. Some navigation elements may change as updates are completed.
+      <div ref={bannerRef} className="fixed top-0 left-0 right-0 z-50 border-b border-sky-500/20" style={{ background: "var(--bg-secondary)" }}>
+        <div className="mx-auto max-w-7xl px-4 py-2 sm:py-2.5 text-center">
+          <p className="text-xs sm:text-sm font-medium text-sky-400 dark:text-sky-300 leading-tight" style={{ color: "var(--banner-text)" }}>
+            We&apos;re updating our website. Some navigation elements may change as updates are completed.
           </p>
         </div>
       </div>
 
       {/* ═══ SIMPLE HEADER ═══ */}
-      <header className="fixed top-[40px] left-0 right-0 z-40">
+      <header className="fixed left-0 right-0 z-40" style={{ top: bannerHeight }}>
         <div className="nav-blur border-b border-white/[0.04]" style={{ background: "var(--nav-bg)" }}>
           <div className="mx-auto max-w-7xl px-6 flex items-center justify-between h-[72px] lg:h-[80px]">
             <div className="logo-container rounded-lg bg-[#ffffff] px-3 py-2 flex items-center transition-all duration-300 hover:shadow-[0_0_16px_rgba(4,155,251,0.3)]">

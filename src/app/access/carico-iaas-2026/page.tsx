@@ -664,7 +664,15 @@ function MobileFab({ activeId }: { activeId: string }) {
                 <a
                   key={item.id}
                   href={`#${item.id}`}
-                  onClick={() => setTocOpen(false)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setTocOpen(false);
+                    // Delay scroll until overflow:hidden is removed and layout settles
+                    setTimeout(() => {
+                      const el = document.getElementById(item.id);
+                      if (el) el.scrollIntoView({ behavior: "smooth" });
+                    }, 50);
+                  }}
                   className={`block text-sm py-2.5 rounded-lg border-l-2 transition-all ${
                     item.level === 1 ? "px-4" : item.level === 2 ? "px-4 ml-4" : "px-4 ml-8"
                   } ${
