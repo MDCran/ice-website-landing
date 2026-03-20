@@ -407,7 +407,7 @@ export default function MaintenancePage() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1 }}
-            className="mb-8"
+            className="mb-4"
           >
             <div className="relative">
               <div className="absolute -inset-4 rounded-2xl bg-sky-500/10 blur-2xl" />
@@ -417,38 +417,50 @@ export default function MaintenancePage() {
                   alt="International Computer Exchange"
                   width={280}
                   height={100}
-                  className="h-16 sm:h-20 w-auto"
+                  className="h-24 sm:h-32 w-auto"
                   priority
                 />
               </div>
             </div>
           </motion.div>
 
-          {/* Maintenance Heading */}
+          {/* Est Badge */}
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-sm sm:text-base font-medium uppercase tracking-[0.2em] text-sky-400 mb-10"
+          >
+            Trusted for 35+ Years
+          </motion.p>
+
+          {/* Heading */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="text-center mb-12"
+            className="text-center"
           >
-            <h1 className="text-lg sm:text-xl md:text-2xl font-semibold leading-[1.4] tracking-tight text-[var(--text-primary)]">
-              We&apos;re refreshing our website to better reflect our current{" "}
-              <span className="shimmer-text">technology solutions</span> and services.
+            <h1 className="text-xl sm:text-2xl font-semibold leading-snug text-[var(--text-primary)]">
+              Our website is being <span className="shimmer-text">refreshed</span>.
             </h1>
-            <p className="mx-auto mt-8 max-w-2xl text-base sm:text-lg text-[var(--text-secondary)] leading-relaxed">
-              International Computer Exchange is currently updating its online presence. While our new site is being finalized, we remain fully available to support existing clients, discuss new opportunities, and provide information about our solutions directly.
+            <p className="mx-auto mt-4 max-w-2xl text-base text-[var(--text-secondary)] leading-relaxed">
+              We&apos;re available to discuss your environment and how we can support your business.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-8 w-full">
+            <p className="mx-auto mt-3 max-w-2xl text-sm text-[var(--text-muted)] leading-relaxed">
+              IBM Business Partner delivering enterprise infrastructure solutions since 1990.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8 w-full">
               <a
                 href="tel:1-800-786-9188"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-sky-500 text-white font-medium text-sm hover:bg-sky-400 transition-colors"
+                className="inline-flex items-center gap-2 px-8 py-3 rounded-md bg-sky-500 text-white font-medium text-sm tracking-wide hover:bg-sky-400 transition-colors shadow-md shadow-sky-500/20"
               >
                 <Phone className="h-4 w-4" />
                 Call Now
               </a>
               <a
                 href="mailto:info@icesales.com"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-[var(--text-muted)]/30 text-[var(--text-primary)] font-medium text-sm hover:border-sky-400 hover:text-sky-400 transition-colors"
+                className="inline-flex items-center gap-2 px-8 py-3 rounded-md border border-[var(--text-muted)]/20 text-[var(--text-primary)] font-medium text-sm tracking-wide hover:border-sky-400 hover:text-sky-400 transition-colors"
               >
                 <Mail className="h-4 w-4" />
                 Email Us
