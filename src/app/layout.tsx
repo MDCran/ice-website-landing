@@ -14,7 +14,9 @@ export const metadata: Metadata = {
   title: "International Computer Exchange — Under Maintenance",
   description:
     "IBM Business Partner since 1990 — our website is currently under maintenance. We'll be back soon with enterprise technology solutions including cloud hosting, data protection, security, and managed services.",
-  icons: [],
+  icons: {
+    icon: "/images/logo/ice-full.jpg",
+  },
 };
 
 export default function RootLayout({
