@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+@keyframes slide-deck-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 @theme {
   --color-ev-950: #030303;
   --color-ev-900: #0a1020;
@@ -41,6 +46,7 @@
   --nav-bg: rgba(2, 6, 23, 0.88);
   --card-bg: rgba(255, 255, 255, 0.02);
   --card-border: rgba(255, 255, 255, 0.06);
+  --banner-text: #38bdf8;
 }
 
 [data-theme="light"] {
@@ -53,9 +59,10 @@
   --glass-bg: rgba(255, 255, 255, 0.7);
   --glass-border: rgba(4, 155, 251, 0.12);
   --glass-border-hover: rgba(4, 155, 251, 0.35);
-  --nav-bg: rgba(248, 250, 252, 0.9);
+  --nav-bg: #ffffff;
   --card-bg: rgba(255, 255, 255, 0.8);
   --card-border: rgba(0, 0, 0, 0.06);
+  --banner-text: #0369a1;
 }
 
 html {
@@ -1172,22 +1179,30 @@ select:focus {
 
 /* ── Hero text: ALWAYS keep light over dark video overlay ─────────── */
 /* Hero sections have .hero-overlay — keep text light in both modes */
+/* Use main > section:has() to match or exceed specificity of content text overrides */
+[data-theme="light"] main > section:has(.hero-overlay) .text-white,
 [data-theme="light"] section:has(.hero-overlay) .text-white {
   color: white !important;
 }
+[data-theme="light"] main > section:has(.hero-overlay) .text-slate-400,
 [data-theme="light"] section:has(.hero-overlay) .text-slate-400 {
   color: #94a3b8 !important;
 }
+[data-theme="light"] main > section:has(.hero-overlay) .text-slate-300,
+[data-theme="light"] main > section:has(.hero-overlay) .text-slate-300\/90,
 [data-theme="light"] section:has(.hero-overlay) .text-slate-300,
 [data-theme="light"] section:has(.hero-overlay) .text-slate-300\/90 {
   color: #cbd5e1 !important;
 }
+[data-theme="light"] main > section:has(.hero-overlay) .text-sky-400,
 [data-theme="light"] section:has(.hero-overlay) .text-sky-400 {
   color: #38bdf8 !important;
 }
+[data-theme="light"] main > section:has(.hero-overlay) .text-slate-600,
 [data-theme="light"] section:has(.hero-overlay) .text-slate-600 {
   color: #94a3b8 !important;
 }
+[data-theme="light"] main > section:has(.hero-overlay) .shimmer-text,
 [data-theme="light"] section:has(.hero-overlay) .shimmer-text {
   background: linear-gradient(90deg, #049bfb, #0474bc, #14b8a6, #0474bc, #049bfb) !important;
   background-size: 200% auto !important;
@@ -1195,12 +1210,14 @@ select:focus {
   -webkit-text-fill-color: transparent !important;
   background-clip: text !important;
 }
+[data-theme="light"] main > section:has(.hero-overlay) .gradient-text,
 [data-theme="light"] section:has(.hero-overlay) .gradient-text {
   background: linear-gradient(135deg, #049bfb, #0474bc, #14b8a6) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   background-clip: text !important;
 }
+[data-theme="light"] main > section:has(.hero-overlay) .gradient-text-glow,
 [data-theme="light"] section:has(.hero-overlay) .gradient-text-glow {
   background: linear-gradient(135deg, #049bfb, #0474bc, #14b8a6) !important;
   -webkit-background-clip: text !important;
@@ -1553,7 +1570,6 @@ select:focus {
   }
 
   body {
-    background: white !important;
     color: #1a1a1a !important;
   }
 

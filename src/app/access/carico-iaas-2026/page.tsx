@@ -32,7 +32,9 @@ import {
   EyeOff,
   ChevronUp,
   List,
+  Presentation,
 } from "lucide-react";
+import SlideDeckModal from "@/components/slide-deck/SlideDeckModal";
 
 /* ── PDF page mapping per section ── */
 const PAGE_MAP: Record<string, string> = {
@@ -143,29 +145,46 @@ function SectionHeading({ children, sub, id }: { children: React.ReactNode; sub?
   );
 }
 
-/* ── Table of Contents data ── */
-const TOC_ITEMS = [
-  { id: "executive-summary", label: "Executive Summary" },
-  { id: "solution-overview", label: "Solution Overview" },
-  { id: "about-ice", label: "About ICE" },
-  { id: "drivers", label: "Drivers for Modernization" },
-  { id: "current-environment", label: "Current Environment" },
-  { id: "lifecycle", label: "Infrastructure Lifecycle" },
-  { id: "architecture", label: "Architecture Overview" },
-  { id: "strategic-outcomes", label: "Strategic Outcomes" },
-  { id: "proposed-solution", label: "Proposed Hosting Solution" },
-  { id: "managed-services", label: "IBM i Managed Services" },
-  { id: "managed-services-mrs", label: "Managed Services (MRS)" },
-  { id: "backup-services", label: "Backup Services (MRS)" },
-  { id: "hosting-environment", label: "Hosting Environment" },
-  { id: "resource-allocation", label: "Resource Allocation" },
-  { id: "dr-resource-allocation", label: "DR Resource Allocation" },
-  { id: "nrs", label: "Non-Recurring Services" },
-  { id: "migration-timeline", label: "Migration Timeline" },
-  { id: "investment-summary", label: "Investment Summary" },
-  { id: "implementation", label: "Implementation Approach" },
-  { id: "assumptions", label: "Assumptions & Conditions" },
-  { id: "proposal-acceptance", label: "Proposal Acceptance" },
+/* ── Table of Contents data — matches PDF TOC (pages 2–3), 3 levels deep ── */
+const TOC_ITEMS: { id: string; label: string; level: number }[] = [
+  { id: "executive-summary", label: "Executive Summary", level: 1 },
+  { id: "solution-overview", label: "Solution Overview", level: 1 },
+  { id: "platform-components", label: "Platform Components", level: 2 },
+  { id: "business-outcomes", label: "Business Outcomes", level: 2 },
+  { id: "about-ice", label: "About International Computer Exchange", level: 1 },
+  { id: "drivers", label: "Drivers for Infrastructure Modernization", level: 1 },
+  { id: "current-environment", label: "Current Environment Overview", level: 1 },
+  { id: "current-infra-vs-hosted", label: "Current Infrastructure vs Hosted Platform", level: 2 },
+  { id: "current-onprem", label: "Current Environment (On-Premises)", level: 3 },
+  { id: "current-considerations", label: "Current Operational Considerations", level: 3 },
+  { id: "lifecycle", label: "Infrastructure Lifecycle Considerations", level: 1 },
+  { id: "architecture", label: "IBM i Cloud Platform Architecture Overview", level: 1 },
+  { id: "dr-architecture", label: "Disaster Recovery Architecture", level: 2 },
+  { id: "strategic-outcomes", label: "Strategic Outcomes", level: 1 },
+  { id: "key-benefits", label: "Key Benefits of the Hosted Platform", level: 2 },
+  { id: "proposed-solution", label: "Proposed Hosting Solution", level: 1 },
+  { id: "migration-oversight", label: "Migration Management", level: 2 },
+  { id: "managed-services", label: "IBM i Managed Services", level: 1 },
+  { id: "managed-capabilities", label: "Key Managed Services Capabilities", level: 2 },
+  { id: "managed-services-mrs", label: "Managed Services (MRS)", level: 1 },
+  { id: "backup-services", label: "Managed Backup Services (MRS)", level: 1 },
+  { id: "hosting-environment", label: "IBM i Hosting Environment", level: 1 },
+  { id: "resource-allocation", label: "Resource Allocation", level: 1 },
+  { id: "dr-resource-allocation", label: "DR Resource Allocation", level: 1 },
+  { id: "nrs", label: "Non-Recurring Services (NRS)", level: 1 },
+  { id: "migration-timeline", label: "Migration Timeline Overview", level: 1 },
+  { id: "investment-summary", label: "Platform Investment Summary", level: 1 },
+  { id: "implementation", label: "Implementation Approach", level: 1 },
+  { id: "assumptions", label: "Assumptions and Conditions of Service", level: 1 },
+  { id: "service-delivery", label: "Service Delivery Model", level: 2 },
+  { id: "billing-terms", label: "Billing and Contract Terms", level: 2 },
+  { id: "customer-responsibilities", label: "Customer Responsibilities", level: 2 },
+  { id: "service-limitations", label: "Service Limitations", level: 2 },
+  { id: "professional-services", label: "Professional Services", level: 2 },
+  { id: "hosting-services", label: "Hosting Services", level: 2 },
+  { id: "backup-dr", label: "Backup and Disaster Recovery", level: 2 },
+  { id: "security-requirements", label: "Security Requirements", level: 2 },
+  { id: "proposal-acceptance", label: "Proposal Acceptance", level: 1 },
 ];
 
 /* ── Sidebar TOC + Search ── */
@@ -272,11 +291,41 @@ function DocSidebar({ activeId }: { activeId: string }) {
     };
   }, []);
 
+  const tocNavRef = useRef<HTMLElement>(null);
+
+  // Auto-scroll the active TOC item into view
+  useEffect(() => {
+    if (!tocNavRef.current) return;
+    const activeEl = tocNavRef.current.querySelector(`[data-toc-id="${activeId}"]`);
+    if (activeEl) {
+      activeEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+  }, [activeId]);
+
+  // Trap mouse wheel inside the TOC so it scrolls the list, not the page
+  useEffect(() => {
+    const nav = tocNavRef.current;
+    if (!nav) return;
+    const handleWheel = (e: WheelEvent) => {
+      const { scrollTop, scrollHeight, clientHeight } = nav;
+      const atTop = scrollTop === 0 && e.deltaY < 0;
+      const atBottom = scrollTop + clientHeight >= scrollHeight - 1 && e.deltaY > 0;
+      // Only allow page scroll if TOC is at its boundary AND scrolling further in that direction
+      if (!atTop && !atBottom) {
+        e.preventDefault();
+        e.stopPropagation();
+        nav.scrollTop += e.deltaY;
+      }
+    };
+    nav.addEventListener("wheel", handleWheel, { passive: false });
+    return () => nav.removeEventListener("wheel", handleWheel);
+  }, []);
+
   return (
-    <aside className="hidden xl:block w-56 shrink-0">
-      <div className="sticky top-24 space-y-4">
+    <aside className="hidden xl:block w-64 shrink-0">
+      <div className="sticky top-24 flex flex-col" style={{ maxHeight: "calc(100vh - 7rem)" }}>
         {/* Search — always visible */}
-        <div>
+        <div className="shrink-0 pb-4">
           <div className="relative">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
             <input
@@ -310,15 +359,18 @@ function DocSidebar({ activeId }: { activeId: string }) {
           )}
         </div>
 
-        {/* TOC */}
-        <div>
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-sky-400 mb-3">Contents</p>
-          <nav className="space-y-0.5">
+        {/* TOC — independently scrollable */}
+        <div className="flex-1 min-h-0 flex flex-col">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-sky-400 mb-3 shrink-0">Contents</p>
+          <nav ref={tocNavRef} className="flex-1 min-h-0 overflow-y-auto overscroll-contain pr-2 space-y-0.5" style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(56,189,248,0.2) transparent" }}>
             {TOC_ITEMS.map((item) => (
               <a
                 key={item.id}
                 href={`#${item.id}`}
-                className={`block text-[11px] leading-relaxed py-1 border-l-2 pl-3 transition-all duration-200 ${
+                data-toc-id={item.id}
+                className={`block text-[11px] leading-relaxed py-1 border-l-2 transition-all duration-200 ${
+                  item.level === 1 ? "pl-3" : item.level === 2 ? "pl-6" : "pl-9"
+                } ${
                   activeId === item.id
                     ? "text-sky-400 border-sky-400 font-semibold"
                     : "text-slate-500 border-white/[0.06] hover:text-sky-400 hover:border-sky-400/40"
@@ -357,14 +409,14 @@ function BulletList({ items }: { items: string[] }) {
 
 function InfoCard({ icon: Icon, title, children }: { icon: any; title: string; children: React.ReactNode }) {
   return (
-    <div className="glass-card rounded-2xl p-6 h-full">
+    <div className="glass-card rounded-2xl p-6 h-full flex flex-col">
       <div className="flex items-center gap-3 mb-4">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-400/10 text-sky-400">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-400/10 text-sky-400">
           <Icon className="h-5 w-5" />
         </div>
         <h4 className="text-white font-semibold">{title}</h4>
       </div>
-      <div className="text-slate-400 text-sm leading-relaxed">{children}</div>
+      <div className="text-slate-400 text-sm leading-relaxed flex-1">{children}</div>
     </div>
   );
 }
@@ -424,6 +476,39 @@ function ResourceTable({ title, rows }: { title: string; rows: { qty: string; de
 /*  Selection Tooltip – "Found on Page X in PDF"        */
 /* ──────────────────────────────────────────────────── */
 
+/* Helper: find the PDF page for a DOM node by walking up to find data-page or section id */
+function getPageForNode(node: Node | null): string | null {
+  let el: HTMLElement | null = node instanceof HTMLElement ? node : node?.parentElement ?? null;
+  while (el && el !== document.body) {
+    // Check for explicit data-page attribute (most precise)
+    const dp = el.getAttribute("data-page");
+    if (dp) return dp;
+
+    // Check for a section with a mapped id
+    const id = el.getAttribute("id");
+    if (id && PAGE_MAP[id]) return PAGE_MAP[id];
+
+    const section = el.closest("section");
+    if (section) {
+      const sdp = section.getAttribute("data-page");
+      if (sdp) return sdp;
+      const heading = section.querySelector("[id]");
+      if (heading) {
+        const hid = heading.getAttribute("id");
+        if (hid && PAGE_MAP[hid]) return PAGE_MAP[hid];
+      }
+    }
+    el = el.parentElement;
+  }
+  return null;
+}
+
+/* Helper: parse page string like "18–19" into [18, 19], or "4" into [4, 4] */
+function parsePageRange(s: string): [number, number] {
+  const parts = s.split(/[–-]/).map((p) => parseInt(p.trim(), 10));
+  return [parts[0], parts[parts.length - 1]];
+}
+
 function SelectionTooltip() {
   const [tooltip, setTooltip] = useState<{ x: number; y: number; page: string } | null>(null);
 
@@ -437,37 +522,32 @@ function SelectionTooltip() {
 
       const range = sel.getRangeAt(0);
 
-      // Walk up from selection to find the nearest section with a TOC id
-      let sectionId: string | null = null;
-      let el: HTMLElement | null = range.startContainer instanceof HTMLElement
-        ? range.startContainer
-        : range.startContainer.parentElement;
+      // Get page for start and end of selection
+      const startPage = getPageForNode(range.startContainer);
+      const endPage = getPageForNode(range.endContainer);
 
-      while (el && el !== document.body) {
-        // Check if this element itself has a mapped id
-        const id = el.getAttribute("id");
-        if (id && PAGE_MAP[id]) { sectionId = id; break; }
+      if (!startPage && !endPage) { setTooltip(null); return; }
 
-        // Check if a parent section contains a heading with a mapped id
-        const section = el.closest("section");
-        if (section) {
-          const heading = section.querySelector("[id]");
-          if (heading) {
-            const hid = heading.getAttribute("id");
-            if (hid && PAGE_MAP[hid]) { sectionId = hid; break; }
-          }
+      // Compute combined range
+      let pageLabel: string;
+      if (!startPage || !endPage || startPage === endPage) {
+        pageLabel = startPage || endPage || "";
+      } else {
+        const [sMin] = parsePageRange(startPage);
+        const [, eMax] = parsePageRange(endPage);
+        if (sMin === eMax) {
+          pageLabel = String(sMin);
+        } else {
+          pageLabel = `${sMin}–${eMax}`;
         }
-        el = el.parentElement;
       }
-
-      if (!sectionId) { setTooltip(null); return; }
 
       // Use absolute (document) coordinates so tooltip stays at the text, not the viewport
       const rect = range.getBoundingClientRect();
       setTooltip({
         x: rect.left + window.scrollX + rect.width / 2,
         y: rect.top + window.scrollY - 8,
-        page: PAGE_MAP[sectionId],
+        page: pageLabel,
       });
     };
 
@@ -585,7 +665,9 @@ function MobileFab({ activeId }: { activeId: string }) {
                   key={item.id}
                   href={`#${item.id}`}
                   onClick={() => setTocOpen(false)}
-                  className={`block text-sm py-2.5 px-4 rounded-lg border-l-2 transition-all ${
+                  className={`block text-sm py-2.5 rounded-lg border-l-2 transition-all ${
+                    item.level === 1 ? "px-4" : item.level === 2 ? "px-4 ml-4" : "px-4 ml-8"
+                  } ${
                     activeId === item.id
                       ? "text-sky-400 border-sky-400 bg-sky-400/5 font-semibold"
                       : "text-slate-400 border-transparent hover:text-white hover:bg-white/5"
@@ -608,22 +690,42 @@ function MobileFab({ activeId }: { activeId: string }) {
 
 function ProposalContent() {
   const [activeId, setActiveId] = useState(TOC_ITEMS[0].id);
+  const [slideDeckOpen, setSlideDeckOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // Track active section via IntersectionObserver
+  // Track active section via scroll position (more reliable than IntersectionObserver for many small sections)
   useEffect(() => {
-    const observers: IntersectionObserver[] = [];
-    TOC_ITEMS.forEach(({ id }) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const obs = new IntersectionObserver(
-        ([entry]) => { if (entry.isIntersecting) setActiveId(id); },
-        { rootMargin: "-20% 0px -60% 0px", threshold: 0 }
-      );
-      obs.observe(el);
-      observers.push(obs);
-    });
-    return () => observers.forEach((o) => o.disconnect());
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+
+      // Check if at bottom
+      if (scrollY + windowHeight >= document.body.scrollHeight - 100) {
+        setActiveId(TOC_ITEMS[TOC_ITEMS.length - 1].id);
+        return;
+      }
+
+      // Find the last heading that's scrolled past the top ~25% of viewport
+      const offset = windowHeight * 0.25;
+      let currentId = TOC_ITEMS[0].id;
+
+      for (const { id } of TOC_ITEMS) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        const rect = el.getBoundingClientRect();
+        if (rect.top <= offset) {
+          currentId = id;
+        } else {
+          break;
+        }
+      }
+
+      setActiveId(currentId);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll(); // initial check
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
 
@@ -632,30 +734,87 @@ function ProposalContent() {
       <SelectionTooltip />
       <BackToTop />
       <MobileFab activeId={activeId} />
+
+      <SlideDeckModal open={slideDeckOpen} onOpenChange={setSlideDeckOpen} />
+
       {/* ═══ HERO / COVER ═══ */}
-      <section className="relative min-h-[500px] flex items-center justify-center overflow-hidden">
+      <section id="pdf-cover" className="relative min-h-[500px] flex items-center justify-center overflow-hidden">
         <video autoPlay muted loop playsInline className="absolute inset-0 h-full w-full object-cover">
           <source src="/videos/data_center.mp4" type="video/mp4" />
         </video>
+        {/* Print-only background image (browsers can't print video) */}
+        <Image
+          src="/videos/data_center_cover.jpg"
+          alt=""
+          fill
+          className="hidden object-cover print-cover-bg"
+          priority
+        />
         <div className="absolute inset-0 hero-overlay" />
         <div className="absolute inset-0 grid-pattern opacity-30" />
-        <div className="relative z-10 text-center px-6 pt-20 max-w-4xl mx-auto">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-400 mb-4">Infrastructure Modernization Proposal</p>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
-              Enterprise IBM i Hosting<br />
-              <span className="gradient-text">and Disaster Recovery Platform</span>
-            </h1>
-            <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4 text-sm text-slate-400">
-              <span>Prepared For <strong className="text-white">Carico International Inc.</strong> &middot; Jason Vickery</span>
-              <span className="hidden sm:block">|</span>
-              <span>Prepared By <strong className="text-white">International Computer Exchange</strong></span>
+        <div className="relative z-10 text-center px-6 pt-20 max-w-4xl mx-auto pdf-cover-content">
+          {/* Title block — centered on screen, centered vertically in PDF */}
+          <div className="pdf-cover-title">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-400 mb-4">Infrastructure Modernization Proposal</p>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
+                Enterprise IBM i Hosting<br />
+                <span className="gradient-text">and Disaster Recovery Platform</span>
+              </h1>
+            </motion.div>
+          </div>
+          {/* Prepared for/by — web version (original inline style) */}
+          <div className="pdf-cover-meta mt-6">
+            {/* Web layout */}
+            <div className="pdf-cover-meta-web">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-sm text-slate-400">
+                <span>Prepared For <strong className="text-white">Carico International Inc.</strong> &middot; Jason Vickery</span>
+                <span className="hidden sm:block">|</span>
+                <span>Prepared By <strong className="text-white">International Computer Exchange</strong></span>
+              </div>
+              <div className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-6 text-xs text-slate-500">
+                <span>David Cran &middot; dcran@icesales.com &middot; 561-394-9189</span>
+              </div>
             </div>
-            <div className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-6 text-xs text-slate-500">
-              <span>David Cran &middot; dcran@icesales.com &middot; 561-394-9189</span>
-              <span>March 17, 2026</span>
+            {/* PDF layout — hidden on screen, shown in print */}
+            <div className="hidden pdf-cover-meta-print">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-8 text-sm text-slate-400">
+                <div className="text-center">
+                  <p className="text-xs uppercase tracking-[0.2em] text-slate-500 mb-1">Prepared For</p>
+                  <p className="text-white font-semibold">Carico International Inc.</p>
+                  <p className="text-slate-400 text-xs mt-0.5">Jason Vickery</p>
+                </div>
+                <div className="w-px h-10 bg-white/10" />
+                <div className="text-center">
+                  <p className="text-xs uppercase tracking-[0.2em] text-slate-500 mb-1">Prepared By</p>
+                  <p className="text-white font-semibold">International Computer Exchange</p>
+                  <p className="text-slate-400 text-xs mt-0.5">David Cran &middot; dcran@icesales.com &middot; 561-394-9189</p>
+                </div>
+              </div>
             </div>
-          </motion.div>
+          </div>
+          {/* Date */}
+          <div className="pdf-cover-date mt-4">
+            <span className="text-xs text-slate-500">March 17, 2026</span>
+          </div>
+          {/* Action buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-6 print-hide">
+            <a
+              href="/Carico-IaaS_Hosting.pdf"
+              download
+              className="flex items-center justify-center gap-2 w-52 px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-sm font-semibold shadow-lg shadow-sky-500/25 transition-all cursor-pointer"
+            >
+              <Download className="h-4 w-4" />
+              <span>Download PDF</span>
+            </a>
+            <button
+              onClick={() => setSlideDeckOpen(true)}
+              className="flex items-center justify-center gap-2 w-52 px-5 py-2.5 rounded-xl bg-white/10 hover:bg-sky-500/20 text-white text-sm font-semibold shadow-lg backdrop-blur-sm border border-white/10 hover:border-sky-500/30 transition-all cursor-pointer"
+            >
+              <Presentation className="h-4 w-4" />
+              <span>View Slide Deck</span>
+            </button>
+          </div>
         </div>
       </section>
 
@@ -667,7 +826,7 @@ function ProposalContent() {
         <div ref={contentRef} data-doc-content className="flex-1 min-w-0 space-y-20">
 
         {/* ═══ EXECUTIVE SUMMARY ═══ */}
-        <section>
+        <section data-page="4">
           <SectionHeading id="executive-summary" sub="Overview of the Proposed IBM i Infrastructure Modernization">EXECUTIVE SUMMARY</SectionHeading>
           <Prose>
             <p>International Computer Exchange (ICE) proposes transitioning Carico International&apos;s IBM i environment to a fully managed hosted platform that includes production hosting, enterprise-class storage, managed backup services, and a geographically separate disaster recovery system. This architecture delivers enterprise-grade reliability, security, and operational simplicity, supported by ICE&apos;s experienced IBM i specialists responsible for ongoing operations, monitoring, and lifecycle management.</p>
@@ -691,7 +850,7 @@ function ProposalContent() {
         </section>
 
         {/* ═══ SOLUTION OVERVIEW ═══ */}
-        <section>
+        <section data-page="5">
           <SectionHeading id="solution-overview" sub="IBM i Hosted Platform with Enterprise Disaster Recovery">SOLUTION OVERVIEW</SectionHeading>
           <Prose>
             <p>International Computer Exchange (ICE) delivers a hosted IBM i infrastructure platform designed to support Carico International&apos;s ERP environment on enterprise-class infrastructure while improving resiliency and eliminating future on-premises IBM Power hardware replacement.</p>
@@ -700,7 +859,7 @@ function ProposalContent() {
             <p>This architecture modernizes Carico International&apos;s ERP platform, improving resiliency and simplifying long-term infrastructure management.</p>
           </Prose>
 
-          <SubHeading>Platform Components</SubHeading>
+          <SubHeading><span id="platform-components" className="scroll-mt-24">Platform Components</span></SubHeading>
           <Prose><p>The hosted platform consists of three primary components designed to deliver resiliency, operational simplicity, and predictable infrastructure performance.</p></Prose>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
             <InfoCard icon={Server} title="Production Environment">
@@ -731,7 +890,7 @@ function ProposalContent() {
             </InfoCard>
           </div>
 
-          <SubHeading>Business Outcomes</SubHeading>
+          <SubHeading><span id="business-outcomes" className="scroll-mt-24">Business Outcomes</span></SubHeading>
           <Prose><p>The proposed ICE IBM i Hosted Platform provides several key operational and infrastructure advantages:</p></Prose>
           <BulletList items={[
             "Eliminates future IBM Power hardware purchases",
@@ -749,7 +908,7 @@ function ProposalContent() {
         </section>
 
         {/* ═══ ABOUT ICE ═══ */}
-        <section>
+        <section data-page="6">
           <SectionHeading id="about-ice">ABOUT INTERNATIONAL COMPUTER EXCHANGE</SectionHeading>
           <Prose>
             <p>International Computer Exchange (ICE), established in 1990, is an IBM Business Partner specializing in IBM Power Systems infrastructure, IBM i hosting, disaster recovery, and managed services.</p>
@@ -759,7 +918,7 @@ function ProposalContent() {
         </section>
 
         {/* ═══ DRIVERS ═══ */}
-        <section>
+        <section data-page="7">
           <SectionHeading id="drivers">DRIVERS FOR INFRASTRUCTURE MODERNIZATION</SectionHeading>
           <Prose><p>Several factors make this an appropriate time for Carico International to modernize its IBM i infrastructure.</p></Prose>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
@@ -777,7 +936,7 @@ function ProposalContent() {
         </section>
 
         {/* ═══ CURRENT ENVIRONMENT ═══ */}
-        <section>
+        <section data-page="7">
           <SectionHeading id="current-environment" sub="Overview of Carico International's existing IBM Power infrastructure and disaster recovery model">CURRENT ENVIRONMENT OVERVIEW</SectionHeading>
           <Prose>
             <p>Carico International currently operates its IBM i environment using IBM Power9 systems deployed within its primary production environment and a secondary disaster recovery facility.</p>
@@ -788,10 +947,10 @@ function ProposalContent() {
             <p>Modern hosted infrastructure platforms typically utilize geographically separated data centers to reduce regional risk and improve disaster recovery resiliency.</p>
           </Prose>
 
-          <SubHeading>Current Infrastructure vs Hosted Platform</SubHeading>
+          <SubHeading><span id="current-infra-vs-hosted" className="scroll-mt-24">Current Infrastructure vs Hosted Platform</span></SubHeading>
           <Prose><p>The following section summarizes Carico International&apos;s current IBM Power infrastructure environment and associated operational considerations.</p></Prose>
 
-          <h4 className="text-white font-semibold mt-6 mb-3">Current Environment (On-Premises IBM Power Infrastructure)</h4>
+          <h4 id="current-onprem" className="text-white font-semibold mt-6 mb-3 scroll-mt-24">Current Environment (On-Premises IBM Power Infrastructure)</h4>
           <Prose><p>Carico International currently operates its IBM i platform on-premises using IBM Power9 infrastructure supported by a secondary disaster recovery system located within a nearby colocation facility.</p></Prose>
 
           <div className="glass-card rounded-xl overflow-hidden my-6">
@@ -817,7 +976,7 @@ function ProposalContent() {
             <p className="text-slate-500 text-xs">(Not included in the $4,100 monthly infrastructure estimate above)</p>
           </div>
 
-          <SubHeading>Current Operational Considerations</SubHeading>
+          <SubHeading><span id="current-considerations" className="scroll-mt-24">Current Operational Considerations</span></SubHeading>
           <BulletList items={[
             "IBM Power9 infrastructure has reached end-of-service lifecycle status (January 31, 2026)",
             "Disaster recovery currently relies on manual tape-based restoration procedures",
@@ -827,7 +986,7 @@ function ProposalContent() {
         </section>
 
         {/* ═══ INFRASTRUCTURE LIFECYCLE ═══ */}
-        <section>
+        <section data-page="9">
           <SectionHeading id="lifecycle">INFRASTRUCTURE LIFECYCLE CONSIDERATIONS</SectionHeading>
           <Prose>
             <p>The current IBM Power infrastructure supporting the environment is based on the IBM Power9 platform (IBM Power Systems 9009-41A). IBM announced that this platform reached the end of its standard service lifecycle on January 31, 2026. In addition, Carico International&apos;s current IBM hardware and software maintenance coverage for both IBM Power systems and the associated tape infrastructure is scheduled to expire on July 15, 2026. At that point, Carico International will need to determine whether to continue operating aging infrastructure beyond its supported lifecycle or transition to a modern supported platform.</p>
@@ -840,7 +999,7 @@ function ProposalContent() {
         </section>
 
         {/* ═══ ARCHITECTURE OVERVIEW ═══ */}
-        <section>
+        <section data-page="10">
           <SectionHeading id="architecture">IBM i CLOUD PLATFORM ARCHITECTURE OVERVIEW</SectionHeading>
           <Prose><p>The following architecture illustrates the ICE IBM i cloud platform design, including the production IBM Power10 environment, SAN-based replication, and a standby disaster recovery system provisioned with production-equivalent capacity in a geographically separate enterprise data center.</p></Prose>
 
@@ -881,7 +1040,7 @@ function ProposalContent() {
             </div>
           </div>
 
-          <SubHeading>Disaster Recovery Architecture</SubHeading>
+          <SubHeading><span id="dr-architecture" className="scroll-mt-24">Disaster Recovery Architecture</span></SubHeading>
           <Prose>
             <p>The ICE disaster recovery solution utilizes near real-time SAN replication between the primary production environment and a secondary data center location. The disaster recovery system is provisioned with compute, memory, and storage resources equivalent to the production environment, enabling the disaster recovery system to support production workloads during a recovery event.</p>
             <p>Production data is replicated at the storage level using near real-time SAN replication between the production and disaster recovery environments.</p>
@@ -891,7 +1050,7 @@ function ProposalContent() {
         </section>
 
         {/* ═══ STRATEGIC OUTCOMES ═══ */}
-        <section>
+        <section data-page="12">
           <SectionHeading id="strategic-outcomes">STRATEGIC OUTCOMES OF THE HOSTED INFRASTRUCTURE MODEL</SectionHeading>
           <Prose>
             <p>The proposed hosted IBM i platform replaces the current on-premises infrastructure with a fully managed enterprise platform designed to improve resiliency, simplify operations, and eliminate future hardware lifecycle management.</p>
@@ -908,7 +1067,7 @@ function ProposalContent() {
           ]} />
           <Prose><p>The ICE hosted platform replaces aging on-premises infrastructure with a fully managed enterprise platform that includes production hosting, SAN-replicated disaster recovery, and predictable infrastructure costs.</p></Prose>
 
-          <SubHeading>Key Benefits of the Hosted Platform</SubHeading>
+          <SubHeading><span id="key-benefits" className="scroll-mt-24">Key Benefits of the Hosted Platform</span></SubHeading>
           <BulletList items={[
             "Transitions aging on-premises infrastructure to a modern hosted IBM Power platform",
             "Eliminates future IBM Power hardware purchases and capital investment",
@@ -921,7 +1080,7 @@ function ProposalContent() {
         </section>
 
         {/* ═══ PROPOSED HOSTING SOLUTION ═══ */}
-        <section>
+        <section data-page="12">
           <SectionHeading id="proposed-solution">PROPOSED HOSTING SOLUTION</SectionHeading>
           <Prose>
             <p>ICE proposes a fully managed IBM i hosting and disaster recovery platform designed to deliver enterprise-grade availability, security, and operational support.</p>
@@ -939,7 +1098,7 @@ function ProposalContent() {
             "Annual disaster recovery testing",
           ]} />
 
-          <SubHeading>Migration Management and Implementation Oversight</SubHeading>
+          <SubHeading><span id="migration-oversight" className="scroll-mt-24">Migration Management and Implementation Oversight</span></SubHeading>
           <Prose>
             <p>ICE assigns a dedicated project manager to coordinate the migration and implementation of the hosted IBM i platform. The project manager serves as the primary point of coordination between Carico International, ICE engineering teams, and supporting infrastructure providers throughout the transition process.</p>
             <p>Project management responsibilities include implementation planning, migration readiness validation, infrastructure provisioning coordination, cutover scheduling, and post-migration validation to ensure a controlled and low-risk transition to the hosted platform.</p>
@@ -947,13 +1106,13 @@ function ProposalContent() {
         </section>
 
         {/* ═══ MANAGED SERVICES ═══ */}
-        <section>
+        <section data-page="13">
           <SectionHeading id="managed-services">IBM i MANAGED SERVICES</SectionHeading>
           <Prose>
             <p>The ICE IBM i Managed Services platform provides proactive monitoring, operational management, and lifecycle support for the hosted IBM i platform.</p>
             <p>The service ensures system stability, operational visibility, and ongoing maintenance of the IBM i environment.</p>
           </Prose>
-          <SubHeading>Key Managed Services Capabilities</SubHeading>
+          <SubHeading><span id="managed-capabilities" className="scroll-mt-24">Key Managed Services Capabilities</span></SubHeading>
           <BulletList items={[
             "Dedicated IBM i platform specialists",
             "24x7 monitoring of the IBM i environment",
@@ -968,7 +1127,7 @@ function ProposalContent() {
         </section>
 
         {/* ═══ MANAGED SERVICES TABLE ═══ */}
-        <section>
+        <section data-page="14">
           <SectionHeading id="managed-services-mrs">MANAGED SERVICES (MONTHLY RECURRING SERVICE &ndash; MRS)</SectionHeading>
           <div className="glass-card rounded-xl p-6 space-y-6">
             <div>
@@ -1003,7 +1162,7 @@ function ProposalContent() {
         </section>
 
         {/* ═══ BACKUP SERVICES ═══ */}
-        <section>
+        <section data-page="15">
           <SectionHeading id="backup-services">MANAGED BACKUP SERVICES (MONTHLY RECURRING SERVICE &ndash; MRS)</SectionHeading>
           <div className="glass-card rounded-xl overflow-hidden my-6">
             <table className="w-full text-sm">
@@ -1037,7 +1196,7 @@ function ProposalContent() {
         </section>
 
         {/* ═══ HOSTING ENVIRONMENT ═══ */}
-        <section>
+        <section data-page="15">
           <SectionHeading id="hosting-environment">IBM i HOSTING ENVIRONMENT</SectionHeading>
           <Prose><p>The following configuration represents the IBM i licensing structure and supporting software components required for the hosted IBM i production and standby disaster recovery environments.</p></Prose>
           <div className="glass-card rounded-xl p-6 mt-6">
@@ -1076,7 +1235,7 @@ function ProposalContent() {
         </section>
 
         {/* ═══ RESOURCE ALLOCATION ═══ */}
-        <section>
+        <section data-page="16">
           <SectionHeading id="resource-allocation">IBM i HOSTED INFRASTRUCTURE RESOURCE ALLOCATION ENVIRONMENT</SectionHeading>
           <Prose><p>The following configuration represents the initial resource allocation for the hosted IBM i platform. Capacity values reflect provisioned infrastructure units and can be expanded as business requirements evolve.</p></Prose>
           <ResourceTable title="Production Resources" rows={[
@@ -1091,7 +1250,7 @@ function ProposalContent() {
         </section>
 
         {/* ═══ DR RESOURCE ALLOCATION ═══ */}
-        <section>
+        <section data-page="16">
           <SectionHeading id="dr-resource-allocation">IBM i DISASTER RECOVERY RESOURCE ALLOCATION ENVIRONMENT</SectionHeading>
           <Prose><p>The following configuration represents the initial resource allocation for the hosted IBM i platform. Capacity values reflect provisioned infrastructure units and can be expanded as business requirements evolve.</p></Prose>
           <ResourceTable title="Disaster Recovery Resources" rows={[
@@ -1106,7 +1265,7 @@ function ProposalContent() {
         </section>
 
         {/* ═══ NRS ═══ */}
-        <section>
+        <section data-page="17">
           <SectionHeading id="nrs">NON-RECURRING SERVICES (NRS)</SectionHeading>
           <Prose><p>The following non-recurring services represent the initial provisioning, configuration, and migration activities required to deploy the hosted IBM i platform.</p></Prose>
           <div className="glass-card rounded-xl p-6 mt-6 space-y-6">
@@ -1136,7 +1295,7 @@ function ProposalContent() {
         </section>
 
         {/* ═══ MIGRATION TIMELINE ═══ */}
-        <section>
+        <section data-page="17">
           <SectionHeading id="migration-timeline">MIGRATION TIMELINE OVERVIEW</SectionHeading>
           <Prose>
             <p>ICE follows a structured migration methodology designed to ensure a controlled transition while minimizing operational disruption. A high-level migration timeline is outlined below.</p>
@@ -1167,7 +1326,7 @@ function ProposalContent() {
         </section>
 
         {/* ═══ INVESTMENT SUMMARY ═══ */}
-        <section>
+        <section data-page="18">
           <SectionHeading id="investment-summary">PLATFORM INVESTMENT SUMMARY</SectionHeading>
           <Prose><p>The following pricing represents the fully managed IBM i hosting platform, including production hosting, SAN-replicated disaster recovery, managed VTL backup infrastructure and services, and enterprise platform monitoring and operational management.</p></Prose>
           <div className="glass-card rounded-2xl p-8 my-8 space-y-6">
@@ -1213,7 +1372,7 @@ function ProposalContent() {
         </section>
 
         {/* ═══ IMPLEMENTATION ═══ */}
-        <section>
+        <section data-page="19">
           <SectionHeading id="implementation">IMPLEMENTATION APPROACH</SectionHeading>
           <Prose>
             <p>To ensure a controlled transition prior to the expiration of Carico International&apos;s current IBM Power infrastructure maintenance coverage scheduled for July 2026, ICE recommends initiating implementation planning in early 2026. Beginning planning during this period allows sufficient time to complete environment preparation, testing, and production migration activities while minimizing disruption to ongoing business operations.</p>
@@ -1243,22 +1402,22 @@ function ProposalContent() {
         </section>
 
         {/* ═══ ASSUMPTIONS ═══ */}
-        <section>
+        <section data-page="20">
           <SectionHeading id="assumptions">ASSUMPTIONS AND CONDITIONS OF SERVICE</SectionHeading>
 
-          <SubHeading>Service Delivery Model</SubHeading>
+          <SubHeading><span id="service-delivery" className="scroll-mt-24">Service Delivery Model</span></SubHeading>
           <Prose>
             <p>The ICE platform delivers the services described in this proposal through a combination of ICE managed services and enterprise-class infrastructure providers. ICE serves as the Customer&apos;s primary technology partner and is responsible for the design, delivery, and ongoing management of the solution.</p>
             <p>The hosted infrastructure supporting the ICE solution is delivered through enterprise-class data center facilities, including DataBank and other approved enterprise data center providers. These facilities are designed with redundant power, cooling, and network connectivity to support high-availability production environments and secure enterprise workloads. The ICE solution may include infrastructure, hosting, backup, disaster recovery, and related services delivered through ICE-managed platforms and supporting infrastructure providers.</p>
           </Prose>
 
-          <SubHeading>Billing and Contract Terms</SubHeading>
+          <SubHeading><span id="billing-terms" className="scroll-mt-24">Billing and Contract Terms</span></SubHeading>
           <BulletList items={[
             "Monthly recurring fees and the contract start date will begin on the earlier of the following: ICE has delivered the solution, or Sixty (60) days from the customer\u2019s execution date, unless otherwise noted.",
             "All non-recurring or onboarding fees will be invoiced upon execution unless otherwise noted.",
           ]} />
 
-          <SubHeading>Customer Responsibilities</SubHeading>
+          <SubHeading><span id="customer-responsibilities" className="scroll-mt-24">Customer Responsibilities</span></SubHeading>
           <BulletList items={[
             "Customer will designate a primary Customer Point of Contact responsible for communications, issue resolution, and coordination of Customer responsibilities related to the Services.",
             "Customer will provide timely and necessary logical and/or physical access (on-prem or in a datacenter) required for ICE to deliver the services.",
@@ -1272,18 +1431,18 @@ function ProposalContent() {
             "Customer will collaborate with ICE, and as required, assist in issue resolution related to the services.",
           ]} />
 
-          <SubHeading>Service Limitations</SubHeading>
+          <SubHeading><span id="service-limitations" className="scroll-mt-24">Service Limitations</span></SubHeading>
           <BulletList items={[
             "ICE is not responsible or liable for performance or non-performance of the IP transport circuits or any other carrier services.",
             "Customer acknowledges the potential risks (including outages, data loss, etc.) associated with running unsupported Operating Systems. ICE may assist Customer on a best effort basis to troubleshoot issues at the hourly rates identified herein.",
           ]} />
 
-          <SubHeading>Professional Services</SubHeading>
+          <SubHeading><span id="professional-services" className="scroll-mt-24">Professional Services</span></SubHeading>
           <BulletList items={[
             "Professional services outside the scope of this Agreement will be billed at ICE\u2019s prevailing professional services rate (currently $295 per hour). Time is tracked and billed in one-hour increments unless otherwise agreed in writing.",
           ]} />
 
-          <SubHeading>Hosting Services</SubHeading>
+          <SubHeading><span id="hosting-services" className="scroll-mt-24">Hosting Services</span></SubHeading>
           <BulletList items={[
             "As applicable, Customer will provide ICE with a list of third-party applications running on each machine, including databases.",
             "Customer is responsible for all testing before go-live in the cloud environment, including application, performance, interface, and network testing.",
@@ -1296,7 +1455,7 @@ function ProposalContent() {
             "IBM Hosting - ICE assumes Customer has a fully functional and correctly configured Simple Mail Transfer Protocol (SMTP) with appropriate Domain Name System (DNS) records in place. Unless otherwise agreed upon in this SOW, ICE is not responsible for any SMTP configuration, troubleshooting, remediation, or integration with external services (i.e. Microsoft 365, Google Workspace, etc.)",
           ]} />
 
-          <SubHeading>Backup and Disaster Recovery</SubHeading>
+          <SubHeading><span id="backup-dr" className="scroll-mt-24">Backup and Disaster Recovery</span></SubHeading>
           <BulletList items={[
             "IBM i Backups - Customer acknowledges that performing full system backups on LPARs is disruptive. Only LPARs with full system flash copies can be backed up without disruption.",
             "IBM i Backups - Full system flash copies are not included unless specifically called out in this SOW.",
@@ -1306,7 +1465,7 @@ function ProposalContent() {
             "Administrative access to disaster recovery infrastructure components or management consoles may be limited to maintain platform integrity and security.",
           ]} />
 
-          <SubHeading>Security Requirements</SubHeading>
+          <SubHeading><span id="security-requirements" className="scroll-mt-24">Security Requirements</span></SubHeading>
           <BulletList items={[
             "Multi-tenant Firewall - Multi-factor Authentication (\u201CMFA\u201D) is required to be enabled.",
             "Multi-tenant Firewall - By default, email MFA will be turned on. ICE supports more secure MFA options, the cost of which is not included unless otherwise agreed upon in writing in this SOW.",
@@ -1314,23 +1473,51 @@ function ProposalContent() {
         </section>
 
         {/* ═══ PROPOSAL ACCEPTANCE ═══ */}
-        <section className="pt-8">
+        <section className="pt-8" data-page="22">
           <SectionHeading id="proposal-acceptance">PROPOSAL ACCEPTANCE</SectionHeading>
-          <Prose>
-            <p>If the proposed solution meets your approval, please download the PDF below to review the Proposal Acceptance section and add your authorized signature.</p>
-          </Prose>
-          <div className="glass-card rounded-2xl p-10 text-center mt-6">
-            <Download className="h-10 w-10 text-sky-400 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-white mb-2">Download Proposal</h3>
-            <p className="text-slate-400 text-sm mb-6">Download the PDF to review Proposal Acceptance and add your authorized signature.</p>
-            <a
-              href="/Carico-IaaS_Hosting.pdf"
-              download
-              className="btn-primary inline-flex items-center gap-2"
-            >
-              <Download className="h-4 w-4 relative z-10" />
-              <span>Download PDF</span>
-            </a>
+
+          {/* Web version — download CTA */}
+          <div className="print-hide">
+            <Prose>
+              <p>If the proposed solution meets your approval, please download the PDF below to review the Proposal Acceptance section and add your authorized signature.</p>
+            </Prose>
+            <div className="glass-card rounded-2xl p-10 text-center mt-6">
+              <Download className="h-10 w-10 text-sky-400 mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-white mb-2">Download Proposal</h3>
+              <p className="text-slate-400 text-sm mb-6">Download the PDF to review Proposal Acceptance and add your authorized signature.</p>
+              <a
+                href="/Carico-IaaS_Hosting.pdf"
+                download
+                className="btn-primary inline-flex items-center gap-2"
+              >
+                <Download className="h-4 w-4 relative z-10" />
+                <span>Download PDF</span>
+              </a>
+            </div>
+          </div>
+
+          {/* Print/PDF version — signature block */}
+          <div className="hidden print-show">
+            <p className="text-slate-300 text-[15px] leading-[1.8] mb-6">If the proposed solution meets your approval, please sign below to authorize International Computer Exchange (ICE) to proceed with the services outlined in this proposal.</p>
+            <p className="text-white font-semibold text-lg mb-8">For Carico International, Inc.</p>
+            <div className="rounded-xl border border-white/20 bg-white p-8 space-y-6">
+              <div>
+                <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2">Authorized Signature</p>
+                <div className="border-b-2 border-slate-300 h-8" />
+              </div>
+              <div>
+                <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2">Name</p>
+                <div className="border-b-2 border-slate-300 h-8" />
+              </div>
+              <div>
+                <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2">Title</p>
+                <div className="border-b-2 border-slate-300 h-8" />
+              </div>
+              <div>
+                <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2">Date</p>
+                <div className="border-b-2 border-slate-300 h-8" />
+              </div>
+            </div>
           </div>
         </section>
 

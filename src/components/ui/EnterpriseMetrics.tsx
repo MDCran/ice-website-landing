@@ -70,7 +70,7 @@ function UptimeGauge({ inView }: { inView: boolean }) {
           {value}%
         </text>
       </svg>
-      <p className="text-xs text-slate-400 mt-1 font-medium uppercase tracking-wider">Uptime SLA</p>
+      <p className="text-xs text-slate-400 mt-1 font-medium uppercase tracking-wider">HA Environment Uptime</p>
     </div>
   );
 }
@@ -254,13 +254,11 @@ export default function EnterpriseMetrics() {
 
   return (
     <div ref={ref}>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 items-start">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 items-start max-w-3xl mx-auto">
         {[
-          <UptimeGauge key="uptime" inView={inView} />,
           <AlwaysOnClock key="clock" />,
+          <UptimeGauge key="uptime" inView={inView} />,
           <SecurityScanner key="scanner" inView={inView} />,
-          <CapacityMeter key="capacity" inView={inView} />,
-          <ThreatCounter key="threats" inView={inView} />,
         ].map((component, i) => (
           <motion.div
             key={i}

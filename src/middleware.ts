@@ -18,7 +18,8 @@ export function middleware(request: NextRequest) {
     pathname.endsWith(".jpg") ||
     pathname.endsWith(".ico") ||
     pathname.endsWith(".mp4") ||
-    pathname.endsWith(".webp")
+    pathname.endsWith(".webp") ||
+    pathname.endsWith(".pdf")
   ) {
     return NextResponse.next();
   }
