@@ -30,7 +30,34 @@ import {
   X,
   Eye,
   EyeOff,
+  ChevronUp,
+  List,
 } from "lucide-react";
+
+/* ── PDF page mapping per section ── */
+const PAGE_MAP: Record<string, string> = {
+  "executive-summary": "4",
+  "solution-overview": "5–6",
+  "about-ice": "6",
+  "drivers": "7",
+  "current-environment": "7–8",
+  "lifecycle": "9",
+  "architecture": "10–11",
+  "strategic-outcomes": "12",
+  "proposed-solution": "12–13",
+  "managed-services": "13",
+  "managed-services-mrs": "14",
+  "backup-services": "15",
+  "hosting-environment": "15",
+  "resource-allocation": "16",
+  "dr-resource-allocation": "16",
+  "nrs": "17",
+  "migration-timeline": "17",
+  "investment-summary": "18–19",
+  "implementation": "19",
+  "assumptions": "20–22",
+  "proposal-acceptance": "22",
+};
 import * as Accordion from "@radix-ui/react-accordion";
 
 const PASSWORD = "Carico2026";
@@ -138,6 +165,7 @@ const TOC_ITEMS = [
   { id: "investment-summary", label: "Investment Summary" },
   { id: "implementation", label: "Implementation Approach" },
   { id: "assumptions", label: "Assumptions & Conditions" },
+  { id: "proposal-acceptance", label: "Proposal Acceptance" },
 ];
 
 /* ── Sidebar TOC + Search ── */
@@ -393,6 +421,188 @@ function ResourceTable({ title, rows }: { title: string; rows: { qty: string; de
 }
 
 /* ──────────────────────────────────────────────────── */
+/*  Selection Tooltip – "Found on Page X in PDF"        */
+/* ──────────────────────────────────────────────────── */
+
+function SelectionTooltip() {
+  const [tooltip, setTooltip] = useState<{ x: number; y: number; page: string } | null>(null);
+
+  useEffect(() => {
+    const handleMouseUp = () => {
+      const sel = window.getSelection();
+      if (!sel || sel.isCollapsed || !sel.toString().trim()) {
+        setTooltip(null);
+        return;
+      }
+
+      const range = sel.getRangeAt(0);
+
+      // Walk up from selection to find the nearest section with a TOC id
+      let sectionId: string | null = null;
+      let el: HTMLElement | null = range.startContainer instanceof HTMLElement
+        ? range.startContainer
+        : range.startContainer.parentElement;
+
+      while (el && el !== document.body) {
+        // Check if this element itself has a mapped id
+        const id = el.getAttribute("id");
+        if (id && PAGE_MAP[id]) { sectionId = id; break; }
+
+        // Check if a parent section contains a heading with a mapped id
+        const section = el.closest("section");
+        if (section) {
+          const heading = section.querySelector("[id]");
+          if (heading) {
+            const hid = heading.getAttribute("id");
+            if (hid && PAGE_MAP[hid]) { sectionId = hid; break; }
+          }
+        }
+        el = el.parentElement;
+      }
+
+      if (!sectionId) { setTooltip(null); return; }
+
+      // Use absolute (document) coordinates so tooltip stays at the text, not the viewport
+      const rect = range.getBoundingClientRect();
+      setTooltip({
+        x: rect.left + window.scrollX + rect.width / 2,
+        y: rect.top + window.scrollY - 8,
+        page: PAGE_MAP[sectionId],
+      });
+    };
+
+    const handleMouseDown = () => setTooltip(null);
+
+    document.addEventListener("mouseup", handleMouseUp);
+    document.addEventListener("mousedown", handleMouseDown);
+    return () => {
+      document.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener("mousedown", handleMouseDown);
+    };
+  }, []);
+
+  if (!tooltip) return null;
+
+  return (
+    <div
+      className="absolute z-[100] pointer-events-none"
+      style={{ left: tooltip.x, top: tooltip.y, transform: "translate(-50%, -100%)" }}
+    >
+      <div className="bg-sky-500 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-lg whitespace-nowrap">
+        Found on Page {tooltip.page} in PDF
+        <div className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-l-[5px] border-r-[5px] border-t-[5px] border-l-transparent border-r-transparent border-t-sky-500" />
+      </div>
+    </div>
+  );
+}
+
+/* ──────────────────────────────────────────────────── */
+/*  Back to Top (desktop) + Mobile FAB (TOC + Top)      */
+/* ──────────────────────────────────────────────────── */
+
+function BackToTop() {
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setShow(window.scrollY > 400);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  if (!show) return null;
+
+  return (
+    <button
+      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+      className="hidden xl:flex fixed bottom-6 right-6 z-50 items-center justify-center w-11 h-11 rounded-xl bg-sky-500 hover:bg-sky-600 text-white shadow-lg shadow-sky-500/25 transition-all cursor-pointer"
+      aria-label="Back to top"
+    >
+      <ChevronUp className="h-5 w-5" />
+    </button>
+  );
+}
+
+function MobileFab({ activeId }: { activeId: string }) {
+  const [show, setShow] = useState(false);
+  const [tocOpen, setTocOpen] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setShow(window.scrollY > 400);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = tocOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [tocOpen]);
+
+  return (
+    <>
+      {/* FAB buttons — visible on mobile/tablet only (below xl) */}
+      <div className={`xl:hidden fixed bottom-6 right-6 z-50 flex flex-col gap-3 transition-opacity duration-200 ${show ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          className="flex items-center justify-center w-11 h-11 rounded-xl bg-slate-700/90 hover:bg-slate-600 text-white shadow-lg backdrop-blur-sm transition-all cursor-pointer"
+          aria-label="Back to top"
+        >
+          <ChevronUp className="h-5 w-5" />
+        </button>
+        <button
+          onClick={() => setTocOpen(true)}
+          className="flex items-center justify-center w-11 h-11 rounded-xl bg-sky-500 hover:bg-sky-600 text-white shadow-lg shadow-sky-500/25 transition-all cursor-pointer"
+          aria-label="Table of contents"
+        >
+          <List className="h-5 w-5" />
+        </button>
+      </div>
+
+      {/* Mobile TOC drawer */}
+      {tocOpen && (
+        <div className="xl:hidden fixed inset-0 z-[60]">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setTocOpen(false)}
+          />
+          {/* Drawer */}
+          <div className="absolute bottom-0 left-0 right-0 max-h-[70vh] rounded-t-2xl bg-[#0a1020] border-t border-white/10 overflow-hidden flex flex-col">
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-white/10 shrink-0">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-400">Contents</p>
+              <button
+                onClick={() => setTocOpen(false)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                aria-label="Close"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            {/* Links */}
+            <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-0.5">
+              {TOC_ITEMS.map((item) => (
+                <a
+                  key={item.id}
+                  href={`#${item.id}`}
+                  onClick={() => setTocOpen(false)}
+                  className={`block text-sm py-2.5 px-4 rounded-lg border-l-2 transition-all ${
+                    activeId === item.id
+                      ? "text-sky-400 border-sky-400 bg-sky-400/5 font-semibold"
+                      : "text-slate-400 border-transparent hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  {item.label}
+                </a>
+              ))}
+            </nav>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+/* ──────────────────────────────────────────────────── */
 /*  Main Proposal Content                               */
 /* ──────────────────────────────────────────────────── */
 
@@ -419,6 +629,9 @@ function ProposalContent() {
 
   return (
     <main className="min-h-screen">
+      <SelectionTooltip />
+      <BackToTop />
+      <MobileFab activeId={activeId} />
       {/* ═══ HERO / COVER ═══ */}
       <section className="relative min-h-[500px] flex items-center justify-center overflow-hidden">
         <video autoPlay muted loop playsInline className="absolute inset-0 h-full w-full object-cover">
@@ -434,11 +647,11 @@ function ProposalContent() {
               <span className="gradient-text">and Disaster Recovery Platform</span>
             </h1>
             <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4 text-sm text-slate-400">
-              <span>Prepared For <strong className="text-white">Carico International Inc.</strong></span>
+              <span>Prepared For <strong className="text-white">Carico International Inc.</strong> &middot; Jason Vickery</span>
               <span className="hidden sm:block">|</span>
               <span>Prepared By <strong className="text-white">International Computer Exchange</strong></span>
             </div>
-            <div className="mt-4 flex items-center justify-center gap-6 text-xs text-slate-500">
+            <div className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-6 text-xs text-slate-500">
               <span>David Cran &middot; dcran@icesales.com &middot; 561-394-9189</span>
               <span>March 17, 2026</span>
             </div>
@@ -447,6 +660,9 @@ function ProposalContent() {
       </section>
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 flex gap-10">
+        {/* ═══ LEFT SIDEBAR ═══ */}
+        <DocSidebar activeId={activeId} />
+
         {/* Main content */}
         <div ref={contentRef} data-doc-content className="flex-1 min-w-0 space-y-20">
 
@@ -518,9 +734,9 @@ function ProposalContent() {
           <SubHeading>Business Outcomes</SubHeading>
           <Prose><p>The proposed ICE IBM i Hosted Platform provides several key operational and infrastructure advantages:</p></Prose>
           <BulletList items={[
-            "Improves disaster recovery readiness through near real-time SAN replication",
             "Eliminates future IBM Power hardware purchases",
             "Reduces internal IT workload by transferring infrastructure and operations to ICE specialists",
+            "Improves disaster recovery readiness through near real-time SAN replication",
             "Moves infrastructure to geographically resilient, SOC-aligned enterprise data centers",
             "Provides a fully provisioned standby IBM Power10 system ready for disaster recovery use",
             "Simplifies infrastructure management through managed services",
@@ -628,6 +844,18 @@ function ProposalContent() {
           <SectionHeading id="architecture">IBM i CLOUD PLATFORM ARCHITECTURE OVERVIEW</SectionHeading>
           <Prose><p>The following architecture illustrates the ICE IBM i cloud platform design, including the production IBM Power10 environment, SAN-based replication, and a standby disaster recovery system provisioned with production-equivalent capacity in a geographically separate enterprise data center.</p></Prose>
 
+          <div className="my-8 flex justify-center">
+            <div className="rounded-xl overflow-hidden border border-white/10 max-w-2xl">
+              <Image
+                src="/images/carico-graphic-1.png"
+                alt="ICE IBM i Cloud Platform Architecture"
+                width={800}
+                height={500}
+                className="w-full h-auto"
+              />
+            </div>
+          </div>
+
           <div className="glass-card rounded-xl p-6 my-8">
             <h4 className="text-white font-semibold mb-4">Platform Capabilities</h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -727,9 +955,9 @@ function ProposalContent() {
           </Prose>
           <SubHeading>Key Managed Services Capabilities</SubHeading>
           <BulletList items={[
-            "IBM i operating system and PTF lifecycle management",
             "Dedicated IBM i platform specialists",
             "24x7 monitoring of the IBM i environment",
+            "IBM i operating system and PTF lifecycle management",
             "Backup monitoring and management",
             "Disk utilization monitoring and alerting",
             "Job monitoring and operational issue detection",
@@ -777,10 +1005,35 @@ function ProposalContent() {
         {/* ═══ BACKUP SERVICES ═══ */}
         <section>
           <SectionHeading id="backup-services">MANAGED BACKUP SERVICES (MONTHLY RECURRING SERVICE &ndash; MRS)</SectionHeading>
-          <ResourceTable title="" rows={[
-            { qty: "1", desc: "Managed Backup Base Subscription \u2013 VTL: Proactive monitoring and management of backups, system administration and maintenance of the backup infrastructure, file and directory level restores included, 24x7 phone support (authorized IT contacts only)" },
-            { qty: "1", desc: "Managed Backup - VTL - 1 LPAR" },
-          ]} />
+          <div className="glass-card rounded-xl overflow-hidden my-6">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-white/10">
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider w-24">Qty</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Description</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                <tr>
+                  <td className="px-4 py-3 text-sky-400 font-mono font-semibold align-top">1</td>
+                  <td className="px-4 py-3 text-slate-300">
+                    <p className="font-semibold text-white">Managed Backup Base Subscription &ndash; VTL</p>
+                    <p className="mt-1 text-slate-400">The ICE managed VTL backup service provides centralized backup monitoring and infrastructure management.</p>
+                    <ul className="mt-2 space-y-1 text-slate-300">
+                      <li className="flex items-start gap-2"><CheckCircle className="h-4 w-4 text-sky-400 shrink-0 mt-0.5" /><span>Proactive monitoring and management of backups</span></li>
+                      <li className="flex items-start gap-2"><CheckCircle className="h-4 w-4 text-sky-400 shrink-0 mt-0.5" /><span>System administration and maintenance of the backup infrastructure</span></li>
+                      <li className="flex items-start gap-2"><CheckCircle className="h-4 w-4 text-sky-400 shrink-0 mt-0.5" /><span>File and directory level restores included</span></li>
+                      <li className="flex items-start gap-2"><CheckCircle className="h-4 w-4 text-sky-400 shrink-0 mt-0.5" /><span>24x7 phone support (authorized IT contacts only)</span></li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="px-4 py-3 text-sky-400 font-mono font-semibold">1</td>
+                  <td className="px-4 py-3 text-slate-300">Managed Backup - VTL - 1 LPAR</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </section>
 
         {/* ═══ HOSTING ENVIRONMENT ═══ */}
@@ -827,7 +1080,7 @@ function ProposalContent() {
           <SectionHeading id="resource-allocation">IBM i HOSTED INFRASTRUCTURE RESOURCE ALLOCATION ENVIRONMENT</SectionHeading>
           <Prose><p>The following configuration represents the initial resource allocation for the hosted IBM i platform. Capacity values reflect provisioned infrastructure units and can be expanded as business requirements evolve.</p></Prose>
           <ResourceTable title="Production Resources" rows={[
-            { qty: "10,000", desc: "IBM i Hosting - Power CPW (1 CPW Unit)" },
+            { qty: "10000", desc: "IBM i Hosting - Power CPW (1 CPW Unit)" },
             { qty: "64", desc: "IBM i Hosting - Power Memory (1GB Unit)" },
             { qty: "4,600", desc: "IBM i Hosting - Power Storage (1GB Unit)" },
             { qty: "5", desc: "VTL Cloud Backup Storage (1TB Unit)" },
@@ -1060,12 +1313,16 @@ function ProposalContent() {
           ]} />
         </section>
 
-        {/* ═══ DOWNLOAD ═══ */}
+        {/* ═══ PROPOSAL ACCEPTANCE ═══ */}
         <section className="pt-8">
-          <div className="glass-card rounded-2xl p-10 text-center">
+          <SectionHeading id="proposal-acceptance">PROPOSAL ACCEPTANCE</SectionHeading>
+          <Prose>
+            <p>If the proposed solution meets your approval, please download the PDF below to review the Proposal Acceptance section and add your authorized signature.</p>
+          </Prose>
+          <div className="glass-card rounded-2xl p-10 text-center mt-6">
             <Download className="h-10 w-10 text-sky-400 mx-auto mb-4" />
             <h3 className="text-xl font-bold text-white mb-2">Download Proposal</h3>
-            <p className="text-slate-400 text-sm mb-6">Get this proposal as a PDF document.</p>
+            <p className="text-slate-400 text-sm mb-6">Download the PDF to review Proposal Acceptance and add your authorized signature.</p>
             <a
               href="/Carico-IaaS_Hosting.pdf"
               download
@@ -1078,9 +1335,6 @@ function ProposalContent() {
         </section>
 
         </div>{/* end main content column */}
-
-        {/* ═══ RIGHT SIDEBAR ═══ */}
-        <DocSidebar activeId={activeId} />
       </div>
     </main>
   );
