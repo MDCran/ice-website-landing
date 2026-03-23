@@ -808,7 +808,7 @@ function ProposalContent() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-6 print-hide">
             <a
               href="/Carico-IaaS_Hosting-rev1.pdf"
-              download
+              download="Carico-IaaS_Hosting.pdf"
               className="flex items-center justify-center gap-2 w-52 px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-sm font-semibold shadow-lg shadow-sky-500/25 transition-all cursor-pointer"
             >
               <Download className="h-4 w-4" />
@@ -1490,7 +1490,7 @@ function ProposalContent() {
               <p className="text-slate-400 text-sm mb-6">Download the PDF to review Proposal Acceptance and add your authorized signature.</p>
               <a
                 href="/Carico-IaaS_Hosting-rev1.pdf"
-                download
+                download="Carico-IaaS_Hosting.pdf"
                 className="btn-primary inline-flex items-center gap-2"
               >
                 <Download className="h-4 w-4 relative z-10" />

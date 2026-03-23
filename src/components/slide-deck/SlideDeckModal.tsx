@@ -411,7 +411,7 @@ export default function SlideDeckModal({ open, onOpenChange }: SlideDeckModalPro
                             transition={isCurrent ? { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] } : { duration: 0 }}
                             style={{ willChange: isCurrent ? "opacity" : undefined }}
                           >
-                            <SlideRenderer><slide.Component active={isCurrent} /></SlideRenderer>
+                            <SlideRenderer><slide.Component active={isCurrent} {...(slide.key === 'cta' ? { onClose: () => onOpenChange(false) } : {})} /></SlideRenderer>
                             {!slide.interactive && (
                               <div className="absolute inset-0 z-10" style={{ userSelect: "none" }} />
                             )}
