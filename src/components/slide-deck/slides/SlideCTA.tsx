@@ -7,7 +7,7 @@ import { fadeIn } from "../slideAnimations";
 
 interface SlideProps { active?: boolean; onClose?: () => void; pdfHref?: string }
 
-export default function SlideCTA({ active = false, onClose, pdfHref = "/Carico-IaaS_Hosting.pdf" }: SlideProps) {
+export default function SlideCTA({ active = false, onClose, pdfHref = "/Carico-IaaS_Hosting-draft.pdf" }: SlideProps) {
   return (
     <div className="w-full h-full relative">
       <div className="relative z-10 flex flex-col items-center justify-center h-full px-14 py-10 text-center">

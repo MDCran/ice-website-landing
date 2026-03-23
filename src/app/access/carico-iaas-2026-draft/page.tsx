@@ -808,7 +808,7 @@ function ProposalContent() {
           {/* Action buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-6 print-hide">
             <a
-              href="/Carico-IaaS_Hosting.pdf"
+              href="/Carico-IaaS_Hosting-draft.pdf"
               download
               className="flex items-center justify-center gap-2 w-52 px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-sm font-semibold shadow-lg shadow-sky-500/25 transition-all cursor-pointer"
             >
@@ -1494,7 +1494,7 @@ function ProposalContent() {
               <h3 className="text-xl font-bold text-white mb-2">Download Proposal</h3>
               <p className="text-slate-400 text-sm mb-6">Download the PDF to review Proposal Acceptance and add your authorized signature.</p>
               <a
-                href="/Carico-IaaS_Hosting.pdf"
+                href="/Carico-IaaS_Hosting-draft.pdf"
                 download
                 className="btn-primary inline-flex items-center gap-2"
               >
