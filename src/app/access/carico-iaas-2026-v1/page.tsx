@@ -34,7 +34,7 @@ import {
   List,
   Presentation,
 } from "lucide-react";
-import SlideDeckModal from "@/components/slide-deck-rev1/SlideDeckModal";
+import SlideDeckModal from "@/components/slide-deck/SlideDeckModal";
 
 /* ── PDF page mapping per section ── */
 const PAGE_MAP: Record<string, string> = {
@@ -154,7 +154,8 @@ const TOC_ITEMS: { id: string; label: string; level: number }[] = [
   { id: "about-ice", label: "About International Computer Exchange", level: 1 },
   { id: "drivers", label: "Drivers for Infrastructure Modernization", level: 1 },
   { id: "current-environment", label: "Current Environment Overview", level: 1 },
-  { id: "infra-strategy", label: "Infrastructure Strategy Options", level: 2 },
+  { id: "current-infra-vs-hosted", label: "Current Infrastructure vs Hosted Platform", level: 2 },
+  { id: "current-onprem", label: "Current Environment (On-Premises)", level: 3 },
   { id: "current-considerations", label: "Current Operational Considerations", level: 3 },
   { id: "lifecycle", label: "Infrastructure Lifecycle Considerations", level: 1 },
   { id: "architecture", label: "IBM i Cloud Platform Architecture Overview", level: 1 },
@@ -802,12 +803,12 @@ function ProposalContent() {
           </div>
           {/* Date */}
           <div className="pdf-cover-date mt-4">
-            <span className="text-xs text-slate-500">March 21, 2026</span>
+            <span className="text-xs text-slate-500">March 17, 2026</span>
           </div>
           {/* Action buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-6 print-hide">
             <a
-              href="/Carico-IaaS_Hosting-rev1.pdf"
+              href="/Carico-IaaS_Hosting.pdf"
               download
               className="flex items-center justify-center gap-2 w-52 px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-sm font-semibold shadow-lg shadow-sky-500/25 transition-all cursor-pointer"
             >
@@ -837,7 +838,7 @@ function ProposalContent() {
           <SectionHeading id="executive-summary" sub="Overview of the Proposed IBM i Infrastructure Modernization">EXECUTIVE SUMMARY</SectionHeading>
           <Prose>
             <p>International Computer Exchange (ICE) proposes transitioning Carico International&apos;s IBM i environment to a fully managed hosted platform that includes production hosting, enterprise-class storage, managed backup services, and a geographically separate disaster recovery system. This architecture delivers enterprise-grade reliability, security, and operational simplicity, supported by ICE&apos;s experienced IBM i specialists responsible for ongoing operations, monitoring, and lifecycle management.</p>
-            <p>Carico International currently operates its IBM i environment on-premises using IBM Power9 infrastructure, with a secondary IBM Power9 system located at a nearby disaster recovery facility within the same metropolitan region. IBM has announced that the Power9 9009-41A platform reached the end of its standard service lifecycle on January 31, 2026, requiring planning for future infrastructure replacement. As a result, Carico International is approaching a decision point &mdash; whether to continue with a traditional infrastructure model that requires hardware replacement and ongoing internal management, or transition to a modern hosted platform.</p>
+            <p>Carico International currently operates its IBM i environment on-premises using IBM Power9 infrastructure, with a secondary IBM Power9 system located at a nearby disaster recovery facility within the same metropolitan region. IBM has announced that the Power9 9009-41A platform reached the end of its standard service lifecycle on January 31, 2026, requiring planning for future infrastructure replacement.</p>
             <p>The proposed solution replaces the existing environment with a hosted IBM i production platform and a fully provisioned disaster recovery system utilizing near real-time SAN replication. By operating from geographically independent enterprise data centers, the solution strengthens resilience against regional disruptions while improving recovery readiness.</p>
           </Prose>
           <div className="mt-6 mb-4 text-white font-semibold">The solution includes:</div>
@@ -851,7 +852,7 @@ function ProposalContent() {
             "Infrastructure lifecycle management",
           ]} />
           <Prose>
-            <p>This approach eliminates future IBM Power hardware replacement and provides a scalable platform for growth. By transitioning to a hosted model, Carico International replaces unpredictable hardware investments with a predictable operational service model while improving overall infrastructure resilience and reliability.</p>
+            <p>This approach eliminates future IBM Power hardware replacement while providing a scalable platform for growth. By transitioning to a hosted model, Carico International replaces unpredictable hardware investments with a predictable operational service model while improving overall infrastructure resilience and reliability.</p>
             <p>This fully integrated approach delivers consistent performance, simplified management, and cost efficiency that is not achievable when these components are implemented separately. It also reduces the need for internal IT resources to manage infrastructure, backup, and disaster recovery operations.</p>
           </Prose>
         </section>
@@ -954,35 +955,33 @@ function ProposalContent() {
             <p>Modern hosted infrastructure platforms typically utilize geographically separated data centers to reduce regional risk and improve disaster recovery resiliency.</p>
           </Prose>
 
-          <SubHeading><span id="infra-strategy" className="scroll-mt-24">Infrastructure Strategy Options</span></SubHeading>
-          <Prose>
-            <p>Carico International is approaching a required infrastructure decision due to the end-of-service lifecycle of its IBM Power9 environment.</p>
-            <p>The current IBM i platform operates on-premises with a secondary disaster recovery system located within a nearby colocation facility.</p>
-          </Prose>
+          <SubHeading><span id="current-infra-vs-hosted" className="scroll-mt-24">Current Infrastructure vs Hosted Platform</span></SubHeading>
+          <Prose><p>The following section summarizes Carico International&apos;s current IBM Power infrastructure environment and associated operational considerations.</p></Prose>
+
+          <h4 id="current-onprem" className="text-white font-semibold mt-6 mb-3 scroll-mt-24">Current Environment (On-Premises IBM Power Infrastructure)</h4>
+          <Prose><p>Carico International currently operates its IBM i platform on-premises using IBM Power9 infrastructure supported by a secondary disaster recovery system located within a nearby colocation facility.</p></Prose>
 
           <div className="glass-card rounded-xl overflow-hidden my-6">
             <table className="w-full text-sm">
               <thead><tr className="border-b border-white/10">
-                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Category</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-red-400/80 uppercase tracking-wider">Option 1 &ndash; Continue Current Infrastructure Model</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-emerald-400/80 uppercase tracking-wider">Option 2 &ndash; Transition to Hosted Platform</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Component</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Estimated Monthly Cost</th>
               </tr></thead>
               <tbody className="divide-y divide-white/5">
-                <tr><td className="px-4 py-3 text-white font-medium">Infrastructure</td><td className="px-4 py-3 text-slate-400">New IBM Power10 systems</td><td className="px-4 py-3 text-emerald-400">IBM Power10 hosted infrastructure</td></tr>
-                <tr><td className="px-4 py-3 text-white font-medium">Capital Investment</td><td className="px-4 py-3 text-slate-400">Purchase 2 New IBM Power10&apos;s</td><td className="px-4 py-3 text-emerald-400">Not required</td></tr>
-                <tr><td className="px-4 py-3 text-white font-medium">Disaster Recovery</td><td className="px-4 py-3 text-slate-400">Existing model (manual / limited)</td><td className="px-4 py-3 text-emerald-400">Near real-time Disaster Recovery</td></tr>
-                <tr><td className="px-4 py-3 text-white font-medium">Recovery Readiness</td><td className="px-4 py-3 text-slate-400">Delayed / manual processes</td><td className="px-4 py-3 text-emerald-400">Production-ready standby environment</td></tr>
-                <tr><td className="px-4 py-3 text-white font-medium">Hardware Lifecycle</td><td className="px-4 py-3 text-slate-400">Customer responsibility</td><td className="px-4 py-3 text-emerald-400">Included as part of hosted platform</td></tr>
-                <tr><td className="px-4 py-3 text-white font-medium">Operations</td><td className="px-4 py-3 text-slate-400">Internal IT management</td><td className="px-4 py-3 text-emerald-400">Fully managed by ICE</td></tr>
-                <tr><td className="px-4 py-3 text-white font-medium">Scalability</td><td className="px-4 py-3 text-slate-400">Limited to installed hardware</td><td className="px-4 py-3 text-emerald-400">Scalable on demand</td></tr>
-                <tr><td className="px-4 py-3 text-white font-medium">Risk Profile</td><td className="px-4 py-3 text-slate-400">Higher (on premises model)</td><td className="px-4 py-3 text-emerald-400">Reduced (enterprise hosted platform)</td></tr>
+                <tr><td className="px-4 py-3 text-slate-300">IBM Power9 Hardware Maintenance</td><td className="px-4 py-3 text-white font-mono">~$1,400</td></tr>
+                <tr><td className="px-4 py-3 text-slate-300">Disaster Recovery Data Center (Flexential)</td><td className="px-4 py-3 text-white font-mono">~$2,700</td></tr>
+                <tr><td className="px-4 py-3 text-slate-300">Tape Backup Infrastructure</td><td className="px-4 py-3 text-slate-400">Existing / Operational</td></tr>
+                <tr><td className="px-4 py-3 text-slate-300">Disaster Recovery Process</td><td className="px-4 py-3 text-slate-400">Manual Tape Restore</td></tr>
+                <tr><td className="px-4 py-3 text-slate-300">Hardware Lifecycle</td><td className="px-4 py-3 text-slate-400">Customer Responsibility</td></tr>
               </tbody>
             </table>
           </div>
 
           <div className="glass-card rounded-xl p-5 my-4 border-l-4 border-l-amber-400/60">
-            <p className="text-amber-400 font-semibold">Estimated Hardware Replacement Investment (Production + DR): $120,000 &ndash; $200,000</p>
-            <p className="text-slate-400 text-sm mt-2">The current environment consists of multiple infrastructure components, including hardware maintenance, disaster recovery facilities, and backup systems, which are not fully itemized within a single cost structure. The primary consideration is not the exact current cost, but that continuation of this model will require a hardware refresh, introducing a capital investment decision.</p>
+            <p className="text-white font-semibold mb-1">Estimated Monthly Infrastructure Cost &asymp; $4,100 per month</p>
+            <p className="text-slate-400 text-sm">This estimate reflects primary infrastructure expenses for the current on-premise IBM Power environment, including maintenance and colocation services, but does not represent the fully burdened cost of operations, including internal IT labor and administrative overhead.</p>
+            <p className="text-amber-400 font-semibold mt-3">Estimated Hardware Replacement Investment $120,000 &ndash; $200,000</p>
+            <p className="text-slate-500 text-xs">(Not included in the $4,100 monthly infrastructure estimate above)</p>
           </div>
 
           <SubHeading><span id="current-considerations" className="scroll-mt-24">Current Operational Considerations</span></SubHeading>
@@ -1340,9 +1339,13 @@ function ProposalContent() {
           <Prose><p>The following pricing represents the fully managed IBM i hosting platform, including production hosting, SAN-replicated disaster recovery, managed VTL backup infrastructure and services, and enterprise platform monitoring and operational management.</p></Prose>
           <div className="glass-card rounded-2xl p-8 my-8 space-y-6">
             <div className="flex items-center justify-between pb-4 border-b border-white/10">
+              <span className="text-slate-400">Current Estimated Infrastructure Cost</span>
+              <span className="text-white font-mono text-lg">~ $4,100/Month</span>
+            </div>
+            <div className="flex items-center justify-between pb-4 border-b border-white/10">
               <div>
                 <span className="text-white font-semibold text-lg">Proposed Total Monthly Recurring Service (MRS)*</span>
-                <p className="text-slate-400 text-sm mt-1 max-w-lg">This service consolidates production infrastructure, disaster recovery, backup services, and ongoing operations into a single predictable managed platform.</p>
+                <p className="text-slate-400 text-sm mt-1 max-w-lg">This service consolidates production infrastructure, disaster recovery, enterprise backup services, and ongoing operational management into a single predictable managed platform.</p>
                 <p className="text-slate-500 text-sm mt-1 max-w-lg">The hosted platform eliminates future IBM Power hardware purchases, infrastructure lifecycle management, and manual tape-based disaster recovery processes.</p>
               </div>
               <span className="text-sky-400 font-mono text-2xl font-bold">$7,700/Month</span>
@@ -1356,6 +1359,8 @@ function ProposalContent() {
           <Prose>
             <p>The monthly recurring service includes IBM i production infrastructure, disaster recovery with SAN replication, managed backup services, enterprise data center hosting, and ongoing IBM i operational support.</p>
             <p>This pricing includes both the production IBM i environment and a fully provisioned standby disaster recovery system maintained in a geographically separate enterprise data center. The pricing presented reflects a fully integrated platform design. Individual component pricing may vary if evaluated independently.</p>
+            <p>This platform-based pricing replaces the need for on-premises hardware purchases, colocation infrastructure, hardware maintenance contracts, and IBM software maintenance associated with maintaining an on-premises IBM Power environment.</p>
+            <p>Based on the current infrastructure model, Carico International is already incurring approximately $4,100 per month in hardware maintenance and colocation infrastructure costs before any future IBM Power hardware replacement investments are required.</p>
             <p className="text-xs text-slate-500">* Pricing reflects the current estimated system configuration as outlined in this proposal. Changes in system capacity, resource requirements, or underlying infrastructure may result in adjustments to the Monthly Recurring Service (MRS).</p>
             <p className="text-xs text-slate-500">Monthly Recurring Service (MRS) pricing will be finalized based on the system configuration determined during implementation planning and testing.</p>
             <p className="text-xs text-slate-500">Non-Recurring Service (NRS) represents estimated implementation and migration services. Actual implementation costs may vary depending on final environment configuration, migration complexity, data volumes, and any remediation required during provisioning or migration activities.</p>
@@ -1489,7 +1494,7 @@ function ProposalContent() {
               <h3 className="text-xl font-bold text-white mb-2">Download Proposal</h3>
               <p className="text-slate-400 text-sm mb-6">Download the PDF to review Proposal Acceptance and add your authorized signature.</p>
               <a
-                href="/Carico-IaaS_Hosting-rev1.pdf"
+                href="/Carico-IaaS_Hosting.pdf"
                 download
                 className="btn-primary inline-flex items-center gap-2"
               >
