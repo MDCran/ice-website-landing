@@ -376,7 +376,7 @@ export default function SlideDeckModal({ open, onOpenChange }: SlideDeckModalPro
                     {currentSlide > 0 && !isTouchDevice && (
                       <button
                         onClick={prev}
-                        className={`absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 text-white transition-all duration-200 cursor-pointer ${
+                        className={`absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-[50] p-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 text-white transition-all duration-200 cursor-pointer ${
                           isFullscreen
                             ? showLeftArrow ? "opacity-100" : "opacity-0 pointer-events-none"
                             : "opacity-100"
@@ -422,7 +422,7 @@ export default function SlideDeckModal({ open, onOpenChange }: SlideDeckModalPro
                     {currentSlide < totalSlides - 1 && !isTouchDevice && (
                       <button
                         onClick={next}
-                        className={`absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 text-white transition-all duration-200 cursor-pointer ${
+                        className={`absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-[50] p-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 text-white transition-all duration-200 cursor-pointer ${
                           isFullscreen
                             ? showRightArrow ? "opacity-100" : "opacity-0 pointer-events-none"
                             : "opacity-100"
@@ -435,7 +435,7 @@ export default function SlideDeckModal({ open, onOpenChange }: SlideDeckModalPro
 
                     {/* Slide counter */}
                     {!isFullscreen && (
-                      <div className={`absolute bottom-3 left-1/2 -translate-x-1/2 z-20 text-xs text-slate-500 font-mono ${mobileSlideView ? "bottom-2 text-[10px]" : ""}`}>
+                      <div className={`absolute bottom-3 left-1/2 -translate-x-1/2 z-[50] text-xs text-slate-500 font-mono ${mobileSlideView ? "bottom-2 text-[10px]" : ""}`}>
                         {currentSlide + 1} / {totalSlides}
                       </div>
                     )}
