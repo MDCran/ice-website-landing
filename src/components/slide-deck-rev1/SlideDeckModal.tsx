@@ -72,9 +72,11 @@ export default function SlideDeckModal({ open, onOpenChange }: SlideDeckModalPro
     return () => clearTimeout(timer);
   }, [currentSlide]);
 
-  /* Detect touch device once */
+  /* Detect touch-only device (phones/tablets, NOT touch-enabled laptops) */
   useEffect(() => {
-    setIsTouchDevice("ontouchstart" in window || navigator.maxTouchPoints > 0);
+    const coarse = window.matchMedia("(pointer: coarse)").matches;
+    const noHover = window.matchMedia("(hover: none)").matches;
+    setIsTouchDevice(coarse && noHover);
   }, []);
 
   /* Navigation */
@@ -365,11 +367,45 @@ export default function SlideDeckModal({ open, onOpenChange }: SlideDeckModalPro
                     onTouchStart={onTouchStart}
                     onTouchEnd={onTouchEnd}
                   >
-                    {/* Static shared background — stays in place during slide transitions */}
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <SlideRenderer>
-                        <SlideBackground />
-                      </SlideRenderer>
+                    {/* Slides container — isolated stacking context so GPU-composited layers don't paint over arrows */}
+                    <div className="absolute inset-0" style={{ zIndex: 0, isolation: "isolate" }}>
+                      {/* Static shared background — stays in place during slide transitions */}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <SlideRenderer>
+                          <SlideBackground />
+                        </SlideRenderer>
+                      </div>
+
+                      {/* All slides pre-rendered — current fades in on top, previous stays visible underneath */}
+                      {SLIDES.map((slide, i) => {
+                        const isCurrent = i === currentSlide;
+                        const isPrev = i === prevSlideIdx && i !== currentSlide;
+                        const visible = isCurrent || isPrev;
+                        return (
+                          <div
+                            key={slide.key}
+                            className="absolute inset-0"
+                            style={{
+                              zIndex: isCurrent ? 2 : isPrev ? 1 : 0,
+                              pointerEvents: isCurrent ? "auto" : "none",
+                              visibility: visible ? "visible" : "hidden",
+                            }}
+                          >
+                            {/* Only the incoming slide animates — prev stays static underneath */}
+                            <motion.div
+                              className="w-full h-full"
+                              animate={{ opacity: isCurrent ? 1 : 0 }}
+                              transition={isCurrent ? { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] } : { duration: 0 }}
+                              style={{ willChange: isCurrent ? "opacity" : undefined }}
+                            >
+                              <SlideRenderer><slide.Component active={isCurrent} {...(slide.key === 'cta' ? { onClose: () => onOpenChange(false) } : {})} /></SlideRenderer>
+                              {!slide.interactive && (
+                                <div className="absolute inset-0 z-10" style={{ userSelect: "none" }} />
+                              )}
+                            </motion.div>
+                          </div>
+                        );
+                      })}
                     </div>
 
                     {/* Left arrow (hidden on mobile) */}
@@ -386,37 +422,6 @@ export default function SlideDeckModal({ open, onOpenChange }: SlideDeckModalPro
                         <ChevronLeft className="h-5 w-5" />
                       </button>
                     )}
-
-                    {/* All slides pre-rendered — current fades in on top, previous stays visible underneath */}
-                    {SLIDES.map((slide, i) => {
-                      const isCurrent = i === currentSlide;
-                      const isPrev = i === prevSlideIdx && i !== currentSlide;
-                      const visible = isCurrent || isPrev;
-                      return (
-                        <div
-                          key={slide.key}
-                          className="absolute inset-0"
-                          style={{
-                            zIndex: isCurrent ? 2 : isPrev ? 1 : 0,
-                            pointerEvents: isCurrent ? "auto" : "none",
-                            visibility: visible ? "visible" : "hidden",
-                          }}
-                        >
-                          {/* Only the incoming slide animates — prev stays static underneath */}
-                          <motion.div
-                            className="w-full h-full"
-                            animate={{ opacity: isCurrent ? 1 : 0 }}
-                            transition={isCurrent ? { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] } : { duration: 0 }}
-                            style={{ willChange: isCurrent ? "opacity" : undefined }}
-                          >
-                            <SlideRenderer><slide.Component active={isCurrent} {...(slide.key === 'cta' ? { onClose: () => onOpenChange(false) } : {})} /></SlideRenderer>
-                            {!slide.interactive && (
-                              <div className="absolute inset-0 z-10" style={{ userSelect: "none" }} />
-                            )}
-                          </motion.div>
-                        </div>
-                      );
-                    })}
 
                     {/* Right arrow (hidden on mobile) */}
                     {currentSlide < totalSlides - 1 && !isTouchDevice && (
