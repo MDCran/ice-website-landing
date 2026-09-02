@@ -1,4 +1,14 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ICE Sales landing site
+
+[![Security checks](https://github.com/MDCran/ice-website-landing/actions/workflows/security-checks.yml/badge.svg)](https://github.com/MDCran/ice-website-landing/actions/workflows/security-checks.yml) [![CodeQL](https://github.com/MDCran/ice-website-landing/actions/workflows/codeql.yml/badge.svg)](https://github.com/MDCran/ice-website-landing/security/code-scanning)
+
+The current ICE Sales landing experience, built with Next.js, React, and Tailwind CSS.
+
+## Preview
+
+![Current ICE Sales website](docs/screenshots/current-home.png)
+
+Captured from [icesales.com](https://icesales.com/) for project documentation.
 
 ## Getting Started
 
