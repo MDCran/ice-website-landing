@@ -1,46 +1,88 @@
-# ICE Sales landing site
+# ICE Sales Landing Site
 
-[![Security checks](https://github.com/MDCran/ice-website-landing/actions/workflows/security-checks.yml/badge.svg)](https://github.com/MDCran/ice-website-landing/actions/workflows/security-checks.yml) [![CodeQL](https://github.com/MDCran/ice-website-landing/actions/workflows/codeql.yml/badge.svg)](https://github.com/MDCran/ice-website-landing/security/code-scanning)
+[![Security checks](https://github.com/MDCran/ice-website-landing/actions/workflows/security-checks.yml/badge.svg)](https://github.com/MDCran/ice-website-landing/actions/workflows/security-checks.yml) [![CodeQL](https://github.com/MDCran/ice-website-landing/actions/workflows/codeql.yml/badge.svg)](https://github.com/MDCran/ice-website-landing/actions/workflows/codeql.yml)
 
-The current ICE Sales landing experience, built with Next.js, React, and Tailwind CSS.
+A Next.js marketing site for International Computer Exchange, combining an animated landing page with solution pages, resource browsing, and contact/subscription forms.
+
+The project showcases responsive interface composition, reusable visual effects, and server-side form/data routes. It is a separate codebase from the [ICE website and CMS](https://github.com/MDCran/ice-website).
+
+[Documented website](https://icesales.com/) · [Landing page source](src/app/page.tsx) · [API routes](src/app/api)
 
 ## Preview
 
-![Current ICE Sales website](docs/screenshots/current-home.png)
+![ICE Sales website preview](docs/screenshots/current-home.png)
 
-Captured from [icesales.com](https://icesales.com/) for project documentation.
+This committed screenshot was captured from the documented website. It illustrates the interface rather than verifying the site's current deployment or business results.
 
-## Getting Started
+## Stack and architecture
 
-First, run the development server:
+- **Frontend:** Next.js 16 App Router, React 19, TypeScript, and Tailwind CSS 4.
+- **Visuals:** Motion, GSAP, Three.js/React Three Fiber, and reusable interaction effects.
+- **Data:** Next.js route handlers with Mongoose/MongoDB for contacts, subscriptions, and resources.
+- **Tooling:** npm lockfile, ESLint 9, and Next.js build scripts.
+
+Exact versions are in [package.json](package.json).
+
+| Path | Responsibility |
+| --- | --- |
+| [src/app/page.tsx](src/app/page.tsx) | Main landing experience |
+| [src/app/solutions](src/app/solutions) | Service-specific pages |
+| [src/components/effects](src/components/effects) | Motion and interaction effects |
+| [src/components/three](src/components/three) | Three.js visual components |
+| [src/app/api](src/app/api) | Contact, subscription, resource, and admin-auth routes |
+| [src/lib/mongodb.ts](src/lib/mongodb.ts) | Connection caching and Mongoose models |
+| [public](public) | Static assets |
+
+## Local development
+
+Requires Node.js 20.9 or newer and npm.
 
 ```bash
+npm ci
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [localhost:3000](http://localhost:3000). Edit `src/app/page.tsx` to work on the landing page.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Optional backend configuration
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Create an uncommitted `.env.local` when exercising data-backed features:
 
-## Learn More
+| Variable | Purpose |
+| --- | --- |
+| `MONGODB_URI` | Connection URI for an isolated development database |
+| `ADMIN_PASSWORD` | Local administrator password used by the admin and resource routes |
 
-To learn more about Next.js, take a look at the following resources:
+Use synthetic submissions and a unique local password. Keep credentials out of source control.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Important development behavior: without `MONGODB_URI`, the [contact](src/app/api/contact/route.ts) and [subscription](src/app/api/subscribe/route.ts) endpoints return a success response **without saving the submission**. The [resource API](src/app/api/resources/route.ts) requires a database. A success message in an unconfigured local preview does not verify persistence.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Validation and security checks
 
-## Deploy on Vercel
+```bash
+npm run lint
+npm run build
+# Serve the production build locally:
+npm start
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The package currently has no automated application test script.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [CodeQL](.github/workflows/codeql.yml) analyzes JavaScript/TypeScript on pushes, pull requests, and a weekly schedule.
+- [Security checks](.github/workflows/security-checks.yml) installs locked dependencies, runs `npm audit --audit-level=high`, and checks whitespace.
+- The audit step is **non-blocking** (`continue-on-error: true`). A green badge can coexist with dependency advisories; inspect the [workflow logs](https://github.com/MDCran/ice-website-landing/actions/workflows/security-checks.yml).
+- These workflows do not run lint, build, browser tests, or database-backed form tests.
+
+Badges show workflow status, not a vulnerability-free guarantee. Review authentication, validation, and deployment configuration before using this code with real users or sensitive data.
+
+## Framework and deployment references
+
+The project uses [next/font](https://nextjs.org/docs/app/getting-started/fonts) to load [Geist](https://vercel.com/font).
+
+- [Next.js documentation](https://nextjs.org/docs)
+- [Learn Next.js](https://nextjs.org/learn)
+- [Next.js source](https://github.com/vercel/next.js)
+- [Next.js deployment documentation](https://nextjs.org/docs/app/getting-started/deploying)
+- [Vercel](https://vercel.com/new)
+
+A deployed copy needs its own environment configuration and MongoDB database for persistence. Verify the form and resource flows against an isolated environment before publishing.
