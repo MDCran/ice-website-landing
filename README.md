@@ -4,12 +4,6 @@
 
 The current ICE Sales landing experience, built with Next.js, React, and Tailwind CSS.
 
-## Preview
-
-![Current ICE Sales website](docs/screenshots/current-home.png)
-
-Captured from [icesales.com](https://icesales.com/) for project documentation.
-
 ## Getting Started
 
 First, run the development server:
